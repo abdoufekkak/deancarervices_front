@@ -1,0 +1,9 @@
+.steps-container {
+  width: 100%;
+  padding: 16px;
+}
+
+.step-label {
+  font-weight: bold;
+  font-size: 12px;
+}
