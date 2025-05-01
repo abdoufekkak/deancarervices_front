@@ -1,22 +1,131 @@
 import React from "react";
-import { Box, Container, Typography, Link } from "@mui/material";
+import { Box, Typography, Grid, Stack } from "@mui/material";
+import { Facebook, Instagram } from "@mui/icons-material";
+import "./Footer.css";
 
 function Footer() {
+  const sections = [
+    {
+      title: "America - 24/7",
+      items: [
+        "🇺🇸 US EAST: +1 929 416 3724",
+        "🇺🇸 US WEST: +1 562 269 3528",
+        "🇨🇦 CANADA: +1 365 654 6440",
+      ],
+    },
+    {
+      title: "Oceania - 24/7",
+      items: ["🇦🇺 AUSTRALIA: +61 1300 297 730"],
+    },
+    {
+      title: "Europe - 24/7",
+      items: ["🇬🇧 UK: +44 20 4586 9665", "🇮🇹 ITALY: +39 06 9450 5426"],
+    },
+    {
+      title: "General Info",
+      items: ["info@transfeero.com"],
+    },
+  ];
+
+  const airports = [
+    "London Heathrow Airport",
+    "Rome Airport",
+    "Barcelona Airport",
+    "Paris Airport",
+    "New York JFK Airport",
+    "Dubai Airport",
+    "Lisbon Airport",
+    "Los Angeles Airport",
+    "Milan Malpensa Airport",
+    "Amsterdam Airport",
+  ];
+
+  const services = [
+    "Airport Transfers",
+    "City rides",
+    "Hourly Service",
+    "Business Solutions",
+    "Help Centre",
+    "Travel Blog",
+    "oneMILE",
+  ];
+
+  const company = [
+    "Terms & Conditions",
+    "Webmasters or influencer?",
+    "For Travel Agencies",
+    "Become a Partner Driver",
+    "Partner/Driver login",
+    "Your Privacy Choices",
+  ];
+
+  const whyUs = ["✓ No Hidden Costs", "✓ 24/7 Support", "✓ Secure Rides"];
+
   return (
-    <Box
-      sx={{
-        backgroundColor: "#333",
-        color: "#fff",
-        py: 2,
-        px: 4,
-        mt: 4,
-        width: "100%",
-        textAlign: "center",
-      }}
-    >
-      <Typography variant="body2">
-        &copy; {new Date().getFullYear()} All Rights Reserved By Abdou&Salma
-      </Typography>
+    <Box className="footer">
+      <Grid container sx={{ ml: 8 }} spacing={20}>
+        {/* Contact Section */}
+        <Grid item xs={12} sm={6} md={3}>
+          {sections.map((section, idx) => (
+            <Box key={idx} mb={2}>
+              <Typography className="footer-title">{section.title}</Typography>
+              {section.items.map((item, i) => (
+                <Typography key={i} className="footer-item">
+                  {item}
+                </Typography>
+              ))}
+            </Box>
+          ))}
+        </Grid>
+
+        {/* Airports Section */}
+        <Grid item xs={12} sm={6} md={3}>
+          <Typography className="footer-title">Top Airports</Typography>
+          {airports.map((airport, idx) => (
+            <Typography key={idx} className="footer-item">
+              {airport}
+            </Typography>
+          ))}
+        </Grid>
+
+        {/* Services + Company */}
+        <Grid item xs={12} sm={6} md={3}>
+          <Box mb={2}>
+            <Typography className="footer-title">
+              Transfeero Services
+            </Typography>
+            {services.map((srv, idx) => (
+              <Typography key={idx} className="footer-item">
+                {srv}
+              </Typography>
+            ))}
+          </Box>
+          <Box>
+            <Typography className="footer-title">Company</Typography>
+            {company.map((item, idx) => (
+              <Typography key={idx} className="footer-item">
+                {item}
+              </Typography>
+            ))}
+          </Box>
+        </Grid>
+
+        {/* Why Us + Icons */}
+        <Grid item xs={12} sm={6} md={3}>
+          <Box mb={2}>
+            <Typography className="footer-title">Why Us?</Typography>
+            {whyUs.map((point, idx) => (
+              <Typography key={idx} className="footer-item">
+                {point}
+              </Typography>
+            ))}
+          </Box>
+          <Box className="footer-icons">
+            <Facebook />
+            <Instagram />
+          </Box>
+        </Grid>
+      </Grid>
     </Box>
   );
 }

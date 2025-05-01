@@ -25,6 +25,7 @@ function DeanSummary() {
         p: 2,
         maxWidth: 350,
         mx: "auto",
+        mt: 2,
         backgroundColor: "white",
       }}
     >

@@ -9,6 +9,10 @@ import NavBar from "./navbar/Navbar.jsx";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import DeanSummary from "./summary/Summary.jsx";
 import HelpCenter from "./CardHelp/HelpCenter.jsx";
+import CardInfo from "./CardInfo/CardInfo.jsx";
+import Steps from "./Steps/Steps.jsx";
+import FeatureBar from "./FeatureBar/FeatureBar.jsx";
+import ExtraInfo from "./ExtraInfo/ExtraInfo.jsx";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
@@ -19,7 +23,7 @@ createRoot(document.getElementById("root")).render(
           path="/"
           element={
             <>
-              <App />
+              {/* <App /> */}
               <CardVeh />
               <Footer />
             </>
@@ -39,6 +43,42 @@ createRoot(document.getElementById("root")).render(
           element={
             <>
               <DeanSummary />
+              <Footer />
+            </>
+          }
+        />{" "}
+        <Route
+          path="/Info"
+          element={
+            <>
+              <CardInfo />
+              <Footer />
+            </>
+          }
+        />
+        <Route
+          path="/Step"
+          element={
+            <>
+              <Steps />
+              <Footer />
+            </>
+          }
+        />
+        <Route
+          path="/Bar"
+          element={
+            <>
+              <FeatureBar />
+              <Footer />
+            </>
+          }
+        />
+        <Route
+          path="/Infos"
+          element={
+            <>
+              <ExtraInfo />
               <Footer />
             </>
           }

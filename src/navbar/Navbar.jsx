@@ -4,86 +4,54 @@ import {
   Typography,
   IconButton,
   Box,
-  Button,
-  Drawer,
-  List,
-  ListItem,
-  ListItemButton,
-  ListItemText,
+  InputBase,
   useTheme,
   useMediaQuery,
 } from "@mui/material";
-import MenuIcon from "@mui/icons-material/Menu";
-import { useState } from "react";
+import DirectionsCarFilledIcon from "@mui/icons-material/DirectionsCarFilled";
+import SearchIcon from "@mui/icons-material/Search";
+import DarkModeIcon from "@mui/icons-material/DarkMode"; // optional
 
-const navLinks = [
-  { label: "Home", href: "/" },
-  { label: "About", href: "/" },
-  { label: "Services", href: "/" },
-  { label: "Contact Us", href: "/" },
-];
+import "./NavBar.css";
 
 function NavBar() {
-  const [drawerOpen, setDrawerOpen] = useState(false);
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down("md"));
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
   return (
-    <>
-      <AppBar position="static" color="default" elevation={2}>
-        <Toolbar>
-          {/* Logo or Title */}
-          <Typography variant="h6" sx={{ flexGrow: 1 }}>
-            MyCompany
+    <AppBar position="static" className="navbar">
+      <Toolbar className="toolbar">
+        {/* Left: Icon + Name */}
+        <Box className="left-section">
+          <DirectionsCarFilledIcon size={32} className="car-icon" />
+          <Typography variant="h6" className="name">
+            Dean
           </Typography>
-
-          {/* Desktop Links */}
-          {!isMobile && (
-            <Box sx={{ display: "flex", gap: 2 }}>
-              {navLinks.map((link) => (
-                <Button key={link.label} href={link.href} color="inherit">
-                  {link.label}
-                </Button>
-              ))}
-            </Box>
-          )}
-
-          {/* Mobile Menu Button */}
-          {isMobile && (
-            <IconButton
-              edge="end"
-              color="inherit"
-              onClick={() => setDrawerOpen(true)}
-            >
-              <MenuIcon />
-            </IconButton>
-          )}
-        </Toolbar>
-      </AppBar>
-
-      {/* Mobile Drawer */}
-      <Drawer
-        anchor="right"
-        open={drawerOpen}
-        onClose={() => setDrawerOpen(false)}
-      >
-        <Box
-          sx={{ width: 250 }}
-          role="presentation"
-          onClick={() => setDrawerOpen(false)}
-        >
-          <List>
-            {navLinks.map((link) => (
-              <ListItem key={link.label} disablePadding>
-                <ListItemButton component="a" href={link.href}>
-                  <ListItemText primary={link.label} />
-                </ListItemButton>
-              </ListItem>
-            ))}
-          </List>
         </Box>
-      </Drawer>
-    </>
+
+        {/* Center: Phrase */}
+        {!isMobile && (
+          <Typography variant="subtitle1" className="booking-text">
+            Reserve your journey
+          </Typography>
+        )}
+
+        {/* Right: Search + Theme Toggle */}
+        <Box className="right-section">
+          <Box className="search-box">
+            <InputBase
+              placeholder="Search"
+              className="search-input"
+              inputProps={{ "aria-label": "search" }}
+            />
+            <SearchIcon className="search-icon" />
+          </Box>
+          <IconButton className="toggle-icon">
+            <DarkModeIcon className="dark" />
+          </IconButton>
+        </Box>
+      </Toolbar>
+    </AppBar>
   );
 }
 

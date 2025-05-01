@@ -18,14 +18,16 @@ function TransferCard() {
   return (
     <Card
       sx={{
-        display: "flex",
+        display: "inline-flex",
         flexDirection: isMobile ? "column" : "row",
         borderRadius: 3,
         boxShadow: 3,
         p: 2,
         mb: 2,
         mt: 2,
+        ml: 5,
         alignItems: isMobile ? "flex-start" : "stretch",
+        alignSelf: "center",
       }}
     >
       {/* Image */}

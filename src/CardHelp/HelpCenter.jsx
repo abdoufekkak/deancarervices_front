@@ -32,7 +32,7 @@ function HelpCenter() {
     <Box
       sx={{
         height: "100vh",
-        display: "flex",
+        display: "inline-flex",
         flexDirection: "column",
         bgcolor: "#fff",
         mt: 5,
