@@ -1,0 +1,23 @@
+/* index.css ou App.css */
+.pac-container {
+    z-index: 2000 !important; /* s'assurer qu'elle s'affiche au-dessus */
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.15);
+    font-family: 'Roboto', sans-serif;
+  }
+  
+  .pac-item {
+    padding: 10px;
+    font-size: 14px;
+    border-bottom: 1px solid #eee;
+  }
+  
+  .pac-item:hover {
+    background-color: #f0f0f0;
+  }
+  
+  .pac-icon {
+    display: none; /* supprimer l’icône si tu veux */
+  }
+  
