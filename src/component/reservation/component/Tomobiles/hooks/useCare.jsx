@@ -9,8 +9,8 @@ const useCars = () => {
   // Fonction fetchCars à l'intérieur du hook
   const fetchCars = async () => {
     try {
-      const response = await axios.get("/api/voitures/notAllowed");  // Remplace par l'URL de ton API
-      return response.data; // Stocke les données des vohttp://localhost:5000itures dans le state
+      const response = await axios.get("http://localhost:5000/api/voitures/notAllowed");  // Remplace par l'URL de ton API
+      return response.data; // Stocke les données des voitures dans le state
     } catch (err) {
       setError("Erreur lors de la récupération des voitures");
     } finally {

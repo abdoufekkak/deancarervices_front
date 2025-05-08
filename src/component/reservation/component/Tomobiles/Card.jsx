@@ -10,8 +10,13 @@ const CarsList = () => {
 
   useEffect(() => {
     fetchCars()
-      .then((cars) => setCars(cars))
-      .catch((e) => console.log(e));
+      .then((cars) =>{
+        console.log(cars)
+        setCars(cars)
+      } )
+      .catch((e) => {
+        console.log(e,"ok")
+        console.log(e)});
   }, [fetchCars]);
  
 
