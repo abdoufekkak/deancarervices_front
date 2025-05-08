@@ -3,34 +3,31 @@ import reactLogo from "./assets/react.svg";
 import viteLogo from "/vite.svg";
 import "./App.css";
 import Footer from "./component/footer/Footer.jsx";
-import BookingForm from "./component/reservation/Form/BookingForm.jsx";
-import CardVeh from "./component/reservation/Tomobiles/Card.jsx";
+import BookingForm from "./component/reservation/component/Form/BookingForm.jsx";
+import CardVeh from "./component/reservation/component/Tomobiles/Card.jsx";
 import NavBar from "./component/navbar/Navbar.jsx";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import DeanSummary from "./summary/Summary.jsx";
 import HelpCenter from "./component/CardHelp/HelpCenter.jsx";
-import CardInfo from "./component/CardInfo/CardInfo.jsx";
+import CardInfo from "./component/reservation/component/CardInfo/CardInfo.jsx";
 import Steps from "./Steps/Steps.jsx";
-import FeatureBar from "./component/FeatureBar/FeatureBar.jsx";
-import ExtraInfo from "./component/FeatureBar/ExtraInfo/ExtraInfo.jsx";
+import FeatureBar from "./component/reservation/component/FeatureBar/FeatureBar.jsx";
+import ExtraInfo from "./component/reservation/component/FeatureBar/ExtraInfo/ExtraInfo.jsx";
 import { useDispatch, useSelector } from "react-redux";
-import GoogleMapPage from "./component/reservation/GoogleMaps/googleMapPage.jsx";
-import MapsAndCard from "./component/reservation/MapsAndCard/MapsAndCard.jsx";
+import MapsAndCard from "./component/reservation/component/MapsAndCard/MapsAndCard.jsx";
 function App() {
-  const dispatch=   useDispatch();
-  // const  navigate=useNavigate();
 
   const step1Data = useSelector((state) => state.process.step1Data);
   return (
     <>
     <Router>
       <NavBar />
+      
       <Routes>
         <Route
           path="/"
           element={
             <>
-              {/* <App /> */}
               <CardVeh />
               <Footer />
             </>
@@ -62,7 +59,7 @@ function App() {
               <Footer />
             </>
           }
-        />{" "}
+        />
         <Route
           path="/Info"
           element={

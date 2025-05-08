@@ -28,7 +28,7 @@ import {
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { Formik } from "formik";
 import * as Yup from "yup";
-import { setStep1Data } from "../../../store/processSlice";
+import { setStep1Data } from "../../../../store/processSlice";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import GooglePlacesAutocomplete from "./GooglePlacesAutocomplete";

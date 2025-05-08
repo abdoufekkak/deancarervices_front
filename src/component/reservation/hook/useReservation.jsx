@@ -2,14 +2,14 @@
 import { useState } from 'react';
 import axios from 'axios';  // Assure-toi d'avoir installé axios avec npm ou yarn
 
-const useCars = () => {
+const useReservation = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
 
   // Fonction fetchCars à l'intérieur du hook
-  const fetchCars = async () => {
+  const addReservation = async (data) => {
     try {
-      const response = await axios.get("http://localhost:5000/api/voitures/notAllowed");  // Remplace par l'URL de ton API
+      const response = await axios.post("http://localhost:5000/api/reservations",data);  // Remplace par l'URL de ton API
       return response.data; // Stocke les données des voitures dans le state
     } catch (err) {
       setError("Erreur lors de la récupération des voitures");
@@ -18,7 +18,7 @@ const useCars = () => {
     }
   };
 
-  return {  isLoading, error, fetchCars };
+  return {  isLoading, error, addReservation };
 };
 
-export default useCars;
+export default useReservation;

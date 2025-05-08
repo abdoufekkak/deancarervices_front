@@ -19,7 +19,8 @@ import "react-phone-input-2/lib/material.css";
 import "./ExtraInfo.css";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { setStep4Data } from "../../../store/processSlice";
+import { setStep4Data } from "../../../../../store/processSlice"; 
+import Steps from "../../../../../Steps/Steps";
 
 const validationSchema = Yup.object().shape({
   firstName: Yup.string().required("Name is required"),
@@ -57,6 +58,8 @@ const step4Data = useSelector((state) => state.process.step4Data);
   });
 
   return (
+    <>
+         <Steps activeStep={2} completedSteps={[0, 1,2]} />
     <Card className="extra-info-card">
       <CardContent>
         <form onSubmit={formik.handleSubmit}>
@@ -181,6 +184,8 @@ const step4Data = useSelector((state) => state.process.step4Data);
         </form>
       </CardContent>
     </Card>
+    </>
+
   );
 }
 

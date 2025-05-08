@@ -11,10 +11,10 @@ import {
   useTheme,
 } from "@mui/material";
 import { People, Work, CheckCircle } from "@mui/icons-material";
-import img1 from "../../../assets/img1.jpg"; // Remplace par une image par défaut
+import img1 from "../../../../assets/img1.jpg"; // Remplace par une image par défaut
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { setStep2Data } from "../../../store/processSlice";
+import { setStep2Data } from "../../../../store/processSlice";
 
 const CarCard = ({ car }) => {
   const theme = useTheme();

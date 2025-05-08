@@ -12,8 +12,9 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import { useNavigate } from "react-router-dom";
 import "./CardInfo.css";
-import { setStep3Data } from "../../store/processSlice";
+import { setStep3Data } from "../../../../store/processSlice";
 import { useDispatch } from "react-redux";
+import Steps from "../../../../Steps/Steps";
 
 function CardInfo() {
   const navigate = useNavigate();
@@ -32,13 +33,16 @@ function CardInfo() {
       chauffeurNotes: Yup.string().max(300, "Notes too long"),
     }),
     onSubmit: (values) => {
-      console.log(values)
-      dispatch(setStep3Data(values));   
-      navigate("/infos"); // Change to your desired route
+      console.log(values);
+      dispatch(setStep3Data(values));
+      navigate("/infos");
     },
   });
 
   return (
+    <>   
+     <Steps activeStep={2} completedSteps={[0, 1]} />
+    
     <Card className="card-info">
       <CardContent className="card-content">
         <form onSubmit={formik.handleSubmit}>
@@ -63,10 +67,12 @@ function CardInfo() {
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
               error={
-                formik.touched.flightNumber && Boolean(formik.errors.flightNumber)
+                formik.touched.flightNumber &&
+                Boolean(formik.errors.flightNumber)
               }
               helperText={
-                formik.touched.flightNumber && formik.errors.flightNumber
+                formik.touched.flightNumber &&
+                formik.errors.flightNumber
               }
             />
             <Typography className="helper-text">
@@ -80,49 +86,54 @@ function CardInfo() {
                 <Checkbox
                   name="childSeat"
                   checked={formik.values.childSeat}
-                  onChange={formik.handleChange}
+                  onChange={(e) => {
+                    const checked = e.target.checked;
+                    formik.setFieldValue("childSeat", checked);
+                    if (checked) {
+                      formik.setFieldValue("chauffeurNotes", "");
+                    }
+                  }}
                 />
               }
               label="Do you need a child seat or booster seat?"
             />
           </div>
 
-          <div className="form-section">
-            <Typography className="label">
-              Notes for the chauffeur (Outward){" "}
-              <span className="question-icon">?</span>
-            </Typography>
-            <TextField
-              name="chauffeurNotes"
-              multiline
-              rows={3}
-              placeholder="Baggage information, special requests ..."
-              variant="outlined"
-              fullWidth
-              className="input-field"
-              value={formik.values.chauffeurNotes}
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              error={
-                formik.touched.chauffeurNotes &&
-                Boolean(formik.errors.chauffeurNotes)
-              }
-              helperText={
-                formik.touched.chauffeurNotes &&
-                formik.errors.chauffeurNotes
-              }
-            />
-          </div>
+          {!formik.values.childSeat && (
+            <div className="form-section">
+              <Typography className="label">
+                Notes for the chauffeur (Outward){" "}
+                <span className="question-icon">?</span>
+              </Typography>
+              <TextField
+                name="chauffeurNotes"
+                multiline
+                rows={3}
+                placeholder="Baggage information, special requests ..."
+                variant="outlined"
+                fullWidth
+                className="input-field"
+                value={formik.values.chauffeurNotes}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                error={
+                  formik.touched.chauffeurNotes &&
+                  Boolean(formik.errors.chauffeurNotes)
+                }
+                helperText={
+                  formik.touched.chauffeurNotes &&
+                  formik.errors.chauffeurNotes
+                }
+              />
+            </div>
+          )}
 
-          <div className="button-container" >
+          <div className="button-container">
             <Button
               type="submit"
               variant="contained"
               className="continue-button"
-              sx={{
-            
-                mt: 5,
-              }}
+              sx={{ mt: 5 }}
             >
               CONTINUE
             </Button>
@@ -130,6 +141,7 @@ function CardInfo() {
         </form>
       </CardContent>
     </Card>
+    </>
   );
 }
 

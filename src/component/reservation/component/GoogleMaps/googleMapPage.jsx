@@ -8,6 +8,8 @@ import {
 } from '@react-google-maps/api';
 import { useLocation } from 'react-router-dom';
 import { Box } from '@mui/material';
+import { useDispatch, useSelector } from 'react-redux';
+import { setStep1Data } from '../../../../store/processSlice';
 
 const containerStyle = {
   width: '50%',
@@ -28,6 +30,8 @@ const GoogleMaps = () => {
   const [shouldRequestDirection, setShouldRequestDirection] = useState(false);
   const [distance, setDistance] = useState('');
   const animationRef = useRef(null);
+  const dispatch = useDispatch();
+  const currentStep1Data = useSelector((state) => state.process.step1Data);
 
   const geocoder = useRef(null);
 
@@ -54,6 +58,12 @@ const GoogleMaps = () => {
       const overviewPath = result.routes[0].overview_path;
       const routeLeg = result.routes[0].legs[0];
       setDistance(routeLeg.distance.text);
+const duration = routeLeg.duration.text;
+dispatch(setStep1Data({
+  ...currentStep1Data,
+  distance: routeLeg.distance.text,
+  duration, // ajoutez la durée ici
+}));
       if (animationRef.current) clearTimeout(animationRef.current);
       animateMarker(overviewPath);
     } else {
