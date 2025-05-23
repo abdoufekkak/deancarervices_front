@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+
 import {
   Box,
   TextField,
@@ -9,6 +10,7 @@ import {
   Tab,
   InputAdornment,
   Paper,
+  useMediaQuery,
 } from "@mui/material";
 import {
   LocationOn,
@@ -32,6 +34,8 @@ import { setStep1Data } from "../../../../store/processSlice";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import GooglePlacesAutocomplete from "./GooglePlacesAutocomplete";
+import "./BookingForm.css";
+import ByHourCard from "./ByHourCard";
 
 const validationSchema = Yup.object().shape({
   from: Yup.string().required("From is required"),
@@ -50,6 +54,7 @@ function BookingForm() {
   const [showReturn, setShowReturn] = useState(false);
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const [type, setType] = useState(0);
 
   return (
     <LocalizationProvider dateAdapter={AdapterDateFns}>
@@ -62,21 +67,54 @@ function BookingForm() {
           returnDate: null,
           returnTime: null,
           passengers: 2,
+          type: 0,
         }}
         validationSchema={validationSchema}
         onSubmit={(values) => {
+          const formatDate = (date) => {
+            if (!date) return null;
+            const d = new Date(date);
+            if (isNaN(d.getTime())) return null; // <- ajout essentiel
+            return `${String(d.getDate()).padStart(2, "0")}/${String(
+              d.getMonth() + 1
+            ).padStart(2, "0")}/${d.getFullYear()}`;
+          };
+
+          const formatTime = (time) => {
+            if (!time) return null;
+            const t = new Date(time);
+            if (isNaN(t.getTime())) return null; // <- ajout essentiel
+            return `${String(t.getHours()).padStart(2, "0")}:${String(
+              t.getMinutes()
+            ).padStart(2, "0")}`;
+          };
+
           const serializedValues = {
             ...values,
-            pickupDate: values.pickupDate?.toISOString(),
-            pickupTime: values.pickupTime?.toISOString(),
-            returnDate: values.returnDate ? values.returnDate.toISOString() : null,
-            returnTime: values.returnTime ? values.returnTime.toISOString() : null,
+            type: values.returnDate ? 1 : 0,
+            pickupDate: formatDate(values.pickupDate),
+            pickupTime: formatTime(values.pickupTime),
+            returnDate: values.returnDate
+              ? formatDate(values.returnDate)
+              : null,
+            returnTime: values.returnTime
+              ? formatTime(values.returnTime)
+              : null,
           };
-        
+
           dispatch(setStep1Data(serializedValues));
-          navigate("/map", { state: { from: values.from, to: values.to, pickupDate: values.pickupDate, pickupTime: values.pickupTime } });
+
+          navigate("/map", {
+            state: {
+              from: values.from,
+              to: values.to,
+              pickupDate: values.pickupDate,
+              pickupTime: values.pickupTime,
+              returnDate: values.returnDate,
+              returnTime: values.returnTime,
+            },
+          });
         }}
-        
       >
         {({
           values,
@@ -86,228 +124,208 @@ function BookingForm() {
           handleBlur,
           setFieldValue,
           handleSubmit,
-        }) => (
-          <form onSubmit={handleSubmit}>
-            <Box
-              sx={{
-                backgroundColor: "white",
-                borderRadius: 2,
-                boxShadow: 3,
-                p: 2,
-                mt: 5,
-                maxWidth: 400,
-                mx: "auto",
-              }}
-            >
-              <Tabs value={tab} onChange={(e, v) => setTab(v)} centered>
-                <Tab icon={<LocationOn />} label="Transport" />
-                <Tab icon={<AccessTimeFilled />} label="By the Hour" />
-              </Tabs>
-
-              <GooglePlacesAutocomplete
-                label="From"
-                value={values.from}
-                onChange={(val) => setFieldValue("from", val)}
-                error={touched.from && Boolean(errors.from)}
-                helperText={touched.from && errors.from}
-              />
-              <GooglePlacesAutocomplete
-                label="To"
-                value={values.to}
-                onChange={(val) => setFieldValue("to", val)}
-                error={touched.to && Boolean(errors.to)}
-                helperText={touched.to && errors.to}
-              />
-              
-
-              <Box sx={{ display: "flex", gap: 2, mt: 2 }}>
-                <DatePicker
-                  label="Pickup date"
-                  value={values.pickupDate}
-                  onChange={(val) => setFieldValue("pickupDate", val)}
-                  renderInput={(params) => (
-                    <TextField
-                      {...params}
-                      fullWidth
-                      error={touched.pickupDate && Boolean(errors.pickupDate)}
-                      helperText={touched.pickupDate && errors.pickupDate}
-                      InputProps={{
-                        ...params.InputProps,
-                        startAdornment: (
-                          <InputAdornment position="start">
-                            <CalendarMonth />
-                          </InputAdornment>
-                        ),
-                      }}
+        }) => {
+          useEffect(() => {
+            if (showReturn && values.returnDate && values.returnTime) {
+              setType(1);
+            } else {
+              setType(0); // pas de retour ou incomplet
+            }
+          }, [showReturn, values.returnDate, values.returnTime]);
+          return (
+            <form onSubmit={handleSubmit}>
+              <Box className="booking-container">
+                <Tabs value={tab} onChange={(e, v) => setTab(v)} centered>
+                  <Tab icon={<LocationOn />} label="Transport" />
+                  <Tab icon={<AccessTimeFilled />} label="By the Hour" />
+                </Tabs>
+                {tab === 0 ? (
+                  <>
+                    <GooglePlacesAutocomplete
+                      label="From"
+                      value={values.from}
+                      onChange={(val) => setFieldValue("from", val)}
+                      error={touched.from && Boolean(errors.from)}
+                      helperText={touched.from && errors.from}
                     />
-                  )}
-                />
-                <TimePicker
-                  label="Pickup time"
-                  value={values.pickupTime}
-                  onChange={(val) => setFieldValue("pickupTime", val)}
-                  renderInput={(params) => (
-                    <TextField
-                      {...params}
-                      fullWidth
-                      error={touched.pickupTime && Boolean(errors.pickupTime)}
-                      helperText={touched.pickupTime && errors.pickupTime}
-                      InputProps={{
-                        ...params.InputProps,
-                        startAdornment: (
-                          <InputAdornment position="start">
-                            <AccessTime />
-                          </InputAdornment>
-                        ),
-                      }}
+                    <GooglePlacesAutocomplete
+                      label="To"
+                      value={values.to}
+                      onChange={(val) => setFieldValue("to", val)}
+                      error={touched.to && Boolean(errors.to)}
+                      helperText={touched.to && errors.to}
                     />
-                  )}
-                />
+                    <Box className="booking-date-time">
+                      <DatePicker
+                        label="Pickup date"
+                        value={values.pickupDate}
+                        onChange={(val) => setFieldValue("pickupDate", val)}
+                        renderInput={(params) => (
+                          <TextField
+                            {...params}
+                            fullWidth
+                            error={
+                              touched.pickupDate && Boolean(errors.pickupDate)
+                            }
+                            helperText={touched.pickupDate && errors.pickupDate}
+                            InputProps={{
+                              ...params.InputProps,
+                              startAdornment: (
+                                <InputAdornment position="start">
+                                  <CalendarMonth />
+                                </InputAdornment>
+                              ),
+                            }}
+                          />
+                        )}
+                      />
+                      <TimePicker
+                        label="Pickup time"
+                        value={values.pickupTime}
+                        onChange={(val) => setFieldValue("pickupTime", val)}
+                        renderInput={(params) => (
+                          <TextField
+                            {...params}
+                            fullWidth
+                            error={
+                              touched.pickupTime && Boolean(errors.pickupTime)
+                            }
+                            helperText={touched.pickupTime && errors.pickupTime}
+                            InputProps={{
+                              ...params.InputProps,
+                              startAdornment: (
+                                <InputAdornment position="start">
+                                  <AccessTime />
+                                </InputAdornment>
+                              ),
+                            }}
+                          />
+                        )}
+                      />
+                    </Box>
+                    <Button
+                      variant="outlined"
+                      fullWidth
+                      onClick={() => {
+                        setShowReturn((prev) => {
+                          const newVal = !prev;
+                          if (!newVal) {
+                            setFieldValue("returnDate", null);
+                            setFieldValue("returnTime", null);
+                          }
+                          return newVal;
+                        });
+                      }}
+                      className="return-toggle-btn"
+                    >
+                      {showReturn ? "REMOVE RETURN" : "ADD RETURN"}
+                    </Button>
+                    {showReturn && (
+                      <Box className="booking-date-time">
+                        <DatePicker
+                          label="Return date"
+                          value={values.returnDate}
+                          onChange={(val) => setFieldValue("returnDate", val)}
+                          renderInput={(params) => (
+                            <TextField
+                              {...params}
+                              fullWidth
+                              error={
+                                touched.returnDate && Boolean(errors.returnDate)
+                              }
+                              helperText={
+                                touched.returnDate && errors.returnDate
+                              }
+                              InputProps={{
+                                ...params.InputProps,
+                                startAdornment: (
+                                  <InputAdornment position="start">
+                                    <CalendarMonth />
+                                  </InputAdornment>
+                                ),
+                              }}
+                            />
+                          )}
+                        />
+                        <TimePicker
+                          label="Return time"
+                          value={values.returnTime}
+                          onChange={(val) => setFieldValue("returnTime", val)}
+                          renderInput={(params) => (
+                            <TextField
+                              {...params}
+                              fullWidth
+                              error={
+                                touched.returnTime && Boolean(errors.returnTime)
+                              }
+                              helperText={
+                                touched.returnTime && errors.returnTime
+                              }
+                              InputProps={{
+                                ...params.InputProps,
+                                startAdornment: (
+                                  <InputAdornment position="start">
+                                    <AccessTime />
+                                  </InputAdornment>
+                                ),
+                              }}
+                            />
+                          )}
+                        />
+                      </Box>
+                    )}
+                    <Paper elevation={0} className="booking-passenger-box">
+                      <Box>
+                        <Typography
+                          variant="subtitle2"
+                          className="booking-passenger-icon"
+                        >
+                          <People sx={{ mr: 1 }} />
+                          Passengers
+                        </Typography>
+                        <Typography fontSize="1.2rem">
+                          {values.passengers}
+                        </Typography>
+                      </Box>
+                      <Box>
+                        <IconButton
+                          onClick={() =>
+                            setFieldValue(
+                              "passengers",
+                              Math.max(1, values.passengers - 1)
+                            )
+                          }
+                          className="passenger-btn-minus"
+                        >
+                          <Remove />
+                        </IconButton>
+                        <IconButton
+                          onClick={() =>
+                            setFieldValue("passengers", values.passengers + 1)
+                          }
+                          className="passenger-btn-plus"
+                        >
+                          <Add />
+                        </IconButton>
+                      </Box>
+                    </Paper>
+                    <Button
+                      variant="contained"
+                      fullWidth
+                      startIcon={<Search />}
+                      type="submit"
+                      className="booking-search-btn"
+                    >
+                      SEARCH
+                    </Button>
+                  </>
+                ) : (
+                  <ByHourCard />
+                )}
               </Box>
-
-              {/* TOGGLE RETURN BUTTON */}
-              <Button
-                variant="outlined"
-                fullWidth
-                sx={{ mt: 2 }}
-                onClick={() => {
-                  setShowReturn((prev) => {
-                    const newVal = !prev;
-                    if (!newVal) {
-                      setFieldValue("returnDate", null);
-                      setFieldValue("returnTime", null);
-                    }
-                    return newVal;
-                  });
-                }}
-              >
-                {showReturn ? "REMOVE RETURN" : "ADD RETURN"}
-              </Button>
-
-              {showReturn && (
-                <Box sx={{ display: "flex", gap: 2, mt: 2 }}>
-                  <DatePicker
-                    label="Return date"
-                    value={values.returnDate}
-                    onChange={(val) => setFieldValue("returnDate", val)}
-                    renderInput={(params) => (
-                      <TextField
-                        {...params}
-                        fullWidth
-                        error={
-                          touched.returnDate && Boolean(errors.returnDate)
-                        }
-                        helperText={touched.returnDate && errors.returnDate}
-                        InputProps={{
-                          ...params.InputProps,
-                          startAdornment: (
-                            <InputAdornment position="start">
-                              <CalendarMonth />
-                            </InputAdornment>
-                          ),
-                        }}
-                      />
-                    )}
-                  />
-                  <TimePicker
-                    label="Return time"
-                    value={values.returnTime}
-                    onChange={(val) => setFieldValue("returnTime", val)}
-                    renderInput={(params) => (
-                      <TextField
-                        {...params}
-                        fullWidth
-                        error={
-                          touched.returnTime && Boolean(errors.returnTime)
-                        }
-                        helperText={touched.returnTime && errors.returnTime}
-                        InputProps={{
-                          ...params.InputProps,
-                          startAdornment: (
-                            <InputAdornment position="start">
-                              <AccessTime />
-                            </InputAdornment>
-                          ),
-                        }}
-                      />
-                    )}
-                  />
-                </Box>
-              )}
-
-              {/* Passengers */}
-              <Paper
-                elevation={0}
-                sx={{
-                  backgroundColor: "#eeeeee",
-                  p: 2,
-                  borderRadius: 2,
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "space-between",
-                  mt: 2,
-                }}
-              >
-                <Box>
-                  <Typography
-                    variant="subtitle2"
-                    color="text.secondary"
-                    sx={{ display: "flex", alignItems: "center", mb: 1 }}
-                  >
-                    <People sx={{ mr: 1 }} />
-                    Passengers
-                  </Typography>
-                  <Typography fontSize="1.2rem">{values.passengers}</Typography>
-                </Box>
-                <Box>
-                  <IconButton
-                    onClick={() =>
-                      setFieldValue(
-                        "passengers",
-                        Math.max(1, values.passengers - 1)
-                      )
-                    }
-                    sx={{
-                      backgroundColor: "#9e9e9e",
-                      color: "white",
-                      "&:hover": { backgroundColor: "#757575" },
-                      mr: 1,
-                      width: 32,
-                      height: 32,
-                    }}
-                  >
-                    <Remove />
-                  </IconButton>
-                  <IconButton
-                    onClick={() =>
-                      setFieldValue("passengers", values.passengers + 1)
-                    }
-                    sx={{
-                      backgroundColor: "#212121",
-                      color: "white",
-                      "&:hover": { backgroundColor: "#000" },
-                      width: 32,
-                      height: 32,
-                    }}
-                  >
-                    <Add />
-                  </IconButton>
-                </Box>
-              </Paper>
-
-              {/* Submit Button */}
-              <Button
-                variant="contained"
-                fullWidth
-                startIcon={<Search />}
-                type="submit"
-                sx={{ mt: 3, backgroundColor: "black", color: "white" }}
-              >
-                SEARCH
-              </Button>
-            </Box>
-          </form>
-        )}
+            </form>
+          );
+        }}
       </Formik>
     </LocalizationProvider>
   );

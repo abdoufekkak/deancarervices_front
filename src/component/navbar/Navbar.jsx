@@ -8,10 +8,7 @@ import {
   useTheme,
   useMediaQuery,
 } from "@mui/material";
-import DirectionsCarFilledIcon from "@mui/icons-material/DirectionsCarFilled";
-import SearchIcon from "@mui/icons-material/Search";
-import DarkModeIcon from "@mui/icons-material/DarkMode"; // optional
-
+import CommuteIcon from "@mui/icons-material/Commute";
 import "./NavBar.css";
 
 function NavBar() {
@@ -21,34 +18,25 @@ function NavBar() {
   return (
     <AppBar position="static" className="navbar">
       <Toolbar className="toolbar">
-        {/* Left: Icon + Name */}
+        {/* Left section: Logo + Title */}
         <Box className="left-section">
-          <DirectionsCarFilledIcon size={32} className="car-icon" />
-          <Typography variant="h6" className="name">
-            Dean
-          </Typography>
+          <CommuteIcon className="car-icon" />
+          <Typography className="name">Dean</Typography>
         </Box>
 
-        {/* Center: Phrase */}
-        {!isMobile && (
-          <Typography variant="subtitle1" className="booking-text">
-            Reserve your journey
-          </Typography>
-        )}
+        {/* Center text: shown only on larger screens */}
+        {<Typography className="booking-text">Reserve your journey</Typography>}
 
-        {/* Right: Search + Theme Toggle */}
+        {/* Right section: Search bar + Toggle */}
         <Box className="right-section">
-          <Box className="search-box">
-            <InputBase
-              placeholder="Search"
-              className="search-input"
-              inputProps={{ "aria-label": "search" }}
-            />
-            <SearchIcon className="search-icon" />
-          </Box>
-          <IconButton className="toggle-icon">
-            <DarkModeIcon className="dark" />
-          </IconButton>
+          {/* <IconButton className="toggle-icon">
+            <DarkModeIcon />
+          </IconButton> */}
+          {!isMobile && (
+            <Typography className="booking-text" sx={{ color: "#0a97b0" }}>
+              English
+            </Typography>
+          )}
         </Box>
       </Toolbar>
     </AppBar>

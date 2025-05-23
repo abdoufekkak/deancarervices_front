@@ -1,6 +1,6 @@
 // src/hooks/useCars.js
-import { useState } from 'react';
-import axios from 'axios';  // Assure-toi d'avoir installé axios avec npm ou yarn
+import { useState } from "react";
+import axios from "axios"; // Assure-toi d'avoir installé axios avec npm ou yarn
 
 const useCars = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -9,7 +9,9 @@ const useCars = () => {
   // Fonction fetchCars à l'intérieur du hook
   const fetchCars = async () => {
     try {
-      const response = await axios.get("http://localhost:5000/api/voitures/notAllowed");  // Remplace par l'URL de ton API
+      const response = await axios.get(
+        "http://localhost:5000/api/voitures/notAllowed"
+      ); // Remplace par l'URL de ton API
       return response.data; // Stocke les données des voitures dans le state
     } catch (err) {
       setError("Erreur lors de la récupération des voitures");
@@ -18,7 +20,7 @@ const useCars = () => {
     }
   };
 
-  return {  isLoading, error, fetchCars };
+  return { isLoading, error, fetchCars };
 };
 
 export default useCars;

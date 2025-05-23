@@ -1,5 +1,5 @@
 // src/components/CarCard.js
-import React from "react";
+import { useEffect, useState } from "react";
 import {
   Box,
   Card,
@@ -15,102 +15,146 @@ import img1 from "../../../../assets/img1.jpg"; // Remplace par une image par d�
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { setStep2Data } from "../../../../store/processSlice";
+import fetchStep4Data from "../../component/Tomobiles/hooks/fetchStep4Data.jsx";
+import { useSelector } from "react-redux";
 
-const CarCard = ({ car }) => {
+import "./Car.css";
+import CardInfo from "../../../reservation/component/CardInfo/CardInfo.jsx";
+import usePriceCalculator from "../../component/Tomobiles/hooks/usePriceCalculator";
+
+const CarCard = ({ car, isSelected, onSelect }) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  setStep2Data
+  setStep2Data;
+  const handleSelect = () => {
+    dispatch(setStep2Data(car)); // enregistre la voiture sélectionnée
+    navigate("/info"); // redirige vers la page info
+  };
+
+  const calculatePrice = usePriceCalculator(car);
+  const [calculatedPrice, setCalculatedPrice] = useState(null);
+  // console.log("CarCard: car =", car);
+  // console.log("CarCard: calculatePrice =", calculatePrice);
+  useEffect(() => {
+    dispatch(fetchStep4Data());
+  }, [dispatch]);
+
+  useEffect(() => {
+    console.log("🔍 Effect triggered - Recalculating price");
+    if (calculatePrice !== null) {
+      setCalculatedPrice(calculatePrice);
+      console.log("✅ Prix calculé:", calculatePrice);
+    } else {
+      console.log("⛔ Prix non calculé, données manquantes");
+    }
+  }, [calculatePrice]);
+
   return (
-    <Card
-      sx={{
-        display: "inline-flex",
-        flexDirection: isMobile ? "column" : "row",
-        borderRadius: 3,
-        boxShadow: 3,
-        p: 2,
-        mb: 2,
-        mt: 2,
-        ml: 5,
-        alignItems: isMobile ? "flex-start" : "stretch",
-        alignSelf: "center",
-      }}
-    >
-      {/* Image */}
-      <Box sx={{ display: "flex", flexDirection: "column", mt: isMobile ? 2 : 0 }}>
+    <Card className={`car-card ${isMobile ? "mobile" : ""}`}>
+      <Box className={`car-image-box ${isMobile ? "mobile" : ""}`}>
         <CardMedia
+          className={`car-image ${isMobile ? "mobile" : ""}`}
           component="img"
           image={img1}
           alt="Car"
-          sx={{
-            width: isMobile ? "100%" : 180,
-            height: isMobile ? 180 : "auto",
-            borderRadius: 2,
-            objectFit: "cover",
-          }}
         />
-        <Typography variant="subtitle2" sx={{ mt: 2, color: "gray", fontStyle: "italic", textAlign: "center" }}>
+        <Typography className="car-brand" variant="subtitle2">
           {car.marque}
         </Typography>
-        <Typography variant="body2" fontWeight="bold" sx={{ mt: 0.5 }}>
+        <Typography className="car-rating" variant="body2">
           Private transfer <span style={{ color: "gold" }}>★ {car.note}</span>
         </Typography>
       </Box>
 
-      {/* Divider */}
-      {!isMobile && <Box sx={{ width: "1px", backgroundColor: "#ccc", mx: 2 }} />}
+      {!isMobile && <Box className="car-divider" />}
 
-      {/* Info */}
-      <Box sx={{ flex: 1, display: "flex", flexDirection: "column", mt: isMobile ? 2 : 0 }}>
-        <Typography variant="h6" fontWeight="bold">
+      <Box className={`car-info ${isMobile ? "mobile" : ""}`}>
+        <Typography className="car-type" variant="h6">
           {car.typeVehicule}
-          <Chip label="BEST VALUE" size="small" color="warning" sx={{ ml: 1, fontWeight: "bold" }} />
+          <Chip
+            label="BEST VALUE"
+            size="small"
+            color="warning"
+            sx={{ ml: 1, fontWeight: "bold" }}
+          />
         </Typography>
-        <Typography variant="body2" sx={{ mt: 1 }}>
-          <People fontSize="small" sx={{ mr: 1, verticalAlign: "middle" }} />
+        <Typography className="car-specs" variant="body2">
+          <People
+            fontSize="small"
+            sx={{ mr: 1, verticalAlign: "middle", color: "#0a97b0" }}
+          />
           Up to {car.capaciteBagages} Passengers
-          <Work fontSize="small" sx={{ mx: 1, verticalAlign: "middle" }} />
+          <Work
+            fontSize="small"
+            sx={{ mx: 1, verticalAlign: "middle", color: "#0a97b0" }}
+          />
           {car.capaciteBagages} medium suitcases
         </Typography>
-        <Box sx={{ mt: 1 }}>
-          <Chip label="Meet & Greet included" variant="outlined" size="small" sx={{ mr: 1 }} />
-          <Chip label="Free Waiting time" variant="outlined" size="small" sx={{ mr: 1 }} />
+        <Box className="car-chips">
+          <Chip
+            label="Meet & Greet included"
+            variant="outlined"
+            size="small"
+            sx={{ mr: 1 }}
+          />
+          <Chip
+            label="Free Waiting time"
+            variant="outlined"
+            size="small"
+            sx={{ mr: 1 }}
+          />
           <Chip label='"Door-to-door"' variant="outlined" size="small" />
         </Box>
       </Box>
 
-      {/* Divider */}
-      {!isMobile && <Box sx={{ width: "1px", backgroundColor: "#ccc", mx: 2 }} />}
+      {!isMobile && <Box className="car-divider" />}
 
-      {/* Price */}
-      <Box sx={{ textAlign: isMobile ? "left" : "right", minWidth: isMobile ? "100%" : 160, mt: isMobile ? 2 : 0 }}>
+      <Box className={`car-price-box ${isMobile ? "mobile" : ""}`}>
         <Typography variant="body2" color="textSecondary">
           Total one-way price
         </Typography>
-        <Typography variant="h5" fontWeight="bold" sx={{ mt: 1 }}>
-          $87.20
-        </Typography>
-        <Chip icon={<CheckCircle />} label="FREE Cancellation" color="success" variant="outlined" size="small" sx={{ mt: 1 }} />
-        <Typography variant="caption" sx={{ mt: 0.5, display: "block" }}>
+
+        <Box>
+          <Typography className="car-price" variant="h5" fontWeight="bold">
+            {calculatePrice
+              ? `$${calculatePrice.total ?? calculatePrice.aller}`
+              : "Chargement..."}
+          </Typography>
+
+          {calculatePrice && (
+            <Typography
+              variant="body2"
+              color="text.secondary"
+              sx={{ fontSize: "0.85rem", mt: 0.5 }}
+            >
+              {calculatePrice.retour ? "(aller / retour)" : "(aller simple)"}
+            </Typography>
+          )}
+        </Box>
+        <Chip
+          icon={<CheckCircle />}
+          label="FREE Cancellation"
+          color="success"
+          variant="outlined"
+          size="small"
+          sx={{ mt: 1 }}
+        />
+        <Typography className="car-price-note" variant="caption">
           ✓ Includes VAT, fees & tip
         </Typography>
-        <Button
-          variant="contained"
-          sx={{
-            mt: 1.5,
-            background: "linear-gradient(to right, #000, #333)",
-            color: "white",
-            fontWeight: "bold",
-          }}
-          fullWidth={isMobile}
-          onClick={() => {
-            dispatch(  setStep2Data(car));
-            navigate("/Info"); // redirige vers la page souhaitée
-          }}
-        >
-          SELECT
-        </Button>
+        {!isSelected && (
+          <Button
+            className="car-select-button"
+            variant="contained"
+            fullWidth={isMobile}
+            onClick={handleSelect}
+            sx={{ mt: 1 }}
+          >
+            SELECT
+          </Button>
+        )}
       </Box>
     </Card>
   );
