@@ -1,6 +1,10 @@
 import React from "react";
-import { Box, Typography, Grid, Stack } from "@mui/material";
-import { Facebook, Instagram } from "@mui/icons-material";
+import { Box, Typography, Grid } from "@mui/material";
+import {
+  Facebook,
+  Instagram,
+  Commute as CommuteIcon,
+} from "@mui/icons-material";
 import "./Footer.css";
 
 function Footer() {
@@ -23,7 +27,7 @@ function Footer() {
     },
     {
       title: "General Info",
-      items: ["info@transfeero.com"],
+      items: ["info@Dean.com"],
     },
   ];
 
@@ -63,7 +67,22 @@ function Footer() {
 
   return (
     <Box className="footer">
-      <Grid container sx={{ ml: 8 }} spacing={20}>
+      {/* Header with icon and brand */}
+      <Box sx={{ display: "flex", alignItems: "center", mb: 4, ml: 10 }}>
+        <CommuteIcon sx={{ fontSize: 40, color: "#0a97b0", mr: 0 }} />
+        <Typography
+          sx={{
+            fontFamily: "Orbitron, sans-serif",
+            fontWeight: 700,
+            fontSize: "2rem",
+            color: "#ffffff",
+          }}
+        >
+          Dean
+        </Typography>
+      </Box>
+
+      <Grid container sx={{ ml: 1, mr: 30 }} spacing={8}>
         {/* Contact Section */}
         <Grid item xs={12} sm={6} md={3}>
           {sections.map((section, idx) => (
@@ -91,9 +110,7 @@ function Footer() {
         {/* Services + Company */}
         <Grid item xs={12} sm={6} md={3}>
           <Box mb={2}>
-            <Typography className="footer-title">
-              Transfeero Services
-            </Typography>
+            <Typography className="footer-title">Dean Services</Typography>
             {services.map((srv, idx) => (
               <Typography key={idx} className="footer-item">
                 {srv}

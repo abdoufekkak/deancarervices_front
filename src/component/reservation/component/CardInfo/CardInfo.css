@@ -70,3 +70,12 @@
 .continue-button:hover {
   background: linear-gradient(to right, #111, #444);
 }
+
+@media (max-width: 1024px) {
+  .card-info {
+    width: 95%;
+    max-width: 100%;
+    margin: 20px auto;
+    padding: 16px;
+  }
+}

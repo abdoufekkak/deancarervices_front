@@ -7,3 +7,34 @@
   font-weight: bold;
   font-size: 12px;
 }
+
+/* === Couleurs des cercles (icônes) === */
+
+/* Étape complétée : cercle (check) et texte */
+.MuiStepIcon-root.Mui-completed {
+  color: #0a97b0 !important;
+}
+.MuiStepLabel-label.Mui-completed {
+  color: #0a97b0 !important;
+  font-weight: bold;
+}
+
+/* Étape active : cercle (numéro) et texte */
+.MuiStepIcon-root.Mui-active {
+  color: #0a97b0 !important;
+}
+.MuiStepLabel-label.Mui-active {
+  color: #000 !important;
+  font-weight: bold;
+}
+
+/* Étapes non actives/non complétées : texte noir */
+.MuiStepLabel-root:not(.Mui-active):not(.Mui-completed) .MuiStepLabel-label {
+  color: #000 !important;
+  font-weight: normal;
+}
+
+/* Optionnel : style du cercle (icône) par défaut */
+.MuiStepIcon-root {
+  color: #000 !important;
+}
