@@ -20,10 +20,10 @@ import "./ExtraInfo.css";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { setStep3Data } from "../../../../../store/processSlice";
-import { setStep2Data } from "../../../../../store/processSlice";
+import { setStep5Data } from "../../../../../store/processSlice";
 import useReservation from "../../../hook/useReservation";
 import usePriceCalculator from "../../Tomobiles/hooks/usePriceCalculator";
-
+import useTour from "../../../hook/useTour";
 const validationSchema = Yup.object().shape({
   firstName: Yup.string().required("Name is required"),
   lastName: Yup.string().required("Last name is required"),
@@ -35,14 +35,14 @@ function ExtraInfo() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { addReservation } = useReservation();
-
+  const { addTour } = useTour();
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [showConfirmation, setShowConfirmation] = useState(false);
 
   const step1Data = useSelector((state) => state.process.step1Data);
   const step2Data = useSelector((state) => state.process.step2Data);
   const step3Data = useSelector((state) => state.process.step3Data);
-  const { calculatePrice } = usePriceCalculator(step2Data);
+  const step5Data = useSelector((state) => state.process.step5Data);
 
   const handleExtraInfoSubmit = async (values) => {
     dispatch(setStep3Data(values));
@@ -50,40 +50,47 @@ function ExtraInfo() {
     console.log("Step1:", step1Data);
     console.log("Step2:", step2Data);
     console.log("Step3:", step3Data);
-    const total = calculatePrice ? parseFloat(calculatePrice) : 0;
+
+    const isByHour = !!step1Data?.byHour;
     const fullName = `${values.firstName} ${values.lastName}`;
 
-    const payload = {
+    const commonPayload = {
       email: values.email,
       phone: values.phone,
       fullName,
       voitureId: step2Data?.id,
       pickupDate: step1Data?.pickupDate,
       pickupTime: step1Data?.pickupTime,
-      returnDate: step1Data?.returnDate,
-      returnTime: step1Data?.returnTime,
       passengers: step1Data?.passengers,
-      prix: total,
+      total: step2Data?.total,
       etat: "Confirmée",
       typeVehicule: step2Data?.typeVehicule,
-      type: step1Data?.type,
       depart: step1Data?.from,
-      arrivee: step1Data?.to,
       distance: step1Data?.distance,
       duree: step1Data?.duration,
     };
 
-    console.log("📦 Payload complet :", payload);
+    const fullPayload = {
+      ...commonPayload,
+      returnDate: step1Data?.returnDate,
+      returnTime: step1Data?.returnTime,
+      type: step1Data?.type,
+      arrivee: step1Data?.to,
+    };
 
     try {
-      const response = await addReservation(payload); // 🔁 Envoie vers le backend
-      console.log("✅ Réservation envoyée avec succès :", response);
+      const response = isByHour
+        ? await addTour(commonPayload)
+        : await addReservation(fullPayload);
+
+      console.log(" Envoi réussi :", response);
       setIsCollapsed(true);
       setTimeout(() => setShowConfirmation(true), 400);
     } catch (error) {
-      console.error("❌ Erreur lors de l'envoi :", error);
+      console.error("Erreur lors de l'envoi :", error);
     }
   };
+
   const formik = useFormik({
     initialValues: {
       firstName: step3Data.firstName || "",

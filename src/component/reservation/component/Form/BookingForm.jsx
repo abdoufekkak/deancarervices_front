@@ -94,12 +94,9 @@ function BookingForm() {
             type: values.returnDate ? 1 : 0,
             pickupDate: formatDate(values.pickupDate),
             pickupTime: formatTime(values.pickupTime),
-            returnDate: values.returnDate
-              ? formatDate(values.returnDate)
-              : null,
-            returnTime: values.returnTime
-              ? formatTime(values.returnTime)
-              : null,
+            returnDate: values.returnDate ? formatDate(values.returnDate) : "",
+            returnTime: values.returnTime ? formatTime(values.returnTime) : "",
+            byHour: false,
           };
 
           dispatch(setStep1Data(serializedValues));

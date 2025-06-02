@@ -1,26 +1,76 @@
-import { useSelector } from "react-redux";
-import { useMemo } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { useMemo, useEffect } from "react";
 
 function usePriceCalculator(car) {
+  const dispatch = useDispatch();
+
   const step1 = useSelector((state) => state.process.step1Data);
   const step4 = useSelector((state) => state.process.step4Data);
 
   const calculatePrice = useMemo(() => {
+    const isByHour = !!step1?.byHour;
+    const hourlyRate = parseFloat(
+      step4.hourlyRates?.rows?.[0]?.priceByHour ?? 0
+    );
+
     const checks = {
       hasPickupDate: !!step1?.pickupDate,
       hasPickupTime: !!step1?.pickupTime,
-      hasDistance: !!step1?.distance,
       hasCarPrix: !!car?.prix,
       hasPrices: Array.isArray(step4?.prices) && step4.prices.length > 0,
       hasDayWeights:
         Array.isArray(step4?.dayWeights) && step4.dayWeights.length > 0,
+      hourlyRate,
+      ...(isByHour
+        ? {
+            hasDuration: !!step1?.duration,
+          }
+        : {
+            hasDistance: !!step1?.distance,
+          }),
     };
+
+    // console.log("Validation checks:", checks);
 
     const allValid = Object.values(checks).every(Boolean);
     if (!allValid) return null;
 
-    const distance = parseFloat(step1.distance);
     const prixVoiture = parseFloat(car.prix);
+    // console.log(" Prix voiture:", prixVoiture);
+
+    const poids = parseFloat(
+      step4.dayWeights.find((dw) => {
+        const [day, month, year] = step1.pickupDate.split("/").map(Number);
+        const dateObj = new Date(year, month - 1, day);
+        const dayOfWeek = dateObj.getDay();
+        const dayType = [0, 6].includes(dayOfWeek) ? "weekend" : "week";
+        return dw.type_jour === dayType;
+      })?.poids ?? 1
+    );
+    // console.log(" Poids jour:", poids);
+
+    if (isByHour) {
+      const duration = parseFloat(step1.duration);
+      const hourlyRate = parseFloat(
+        step4.hourlyRates?.rows?.[0]?.priceByHour ?? 0
+      );
+
+      // console.log(" Durée:", duration);
+      // console.log(" Tarif horaire:", hourlyRate);
+
+      const aller = duration * poids * prixVoiture * hourlyRate;
+
+      // console.log(" Prix calculé (byHour):", aller);
+
+      return {
+        total: aller.toFixed(2),
+        aller: aller.toFixed(2),
+        retour: null,
+      };
+    }
+
+    const distance = parseFloat(step1.distance);
+    // console.log("Distance:", distance);
 
     const computeSegment = (dateStr, timeStr) => {
       const [day, month, year] = dateStr.split("/").map(Number);
@@ -40,12 +90,15 @@ function usePriceCalculator(car) {
 
       if (!priceObj) return null;
 
-      const dayWeightObj = step4.dayWeights.find(
-        (dw) => dw.type_jour === dayType
-      );
-
       const prixBase = parseFloat(priceObj.prix);
-      const poids = parseFloat(dayWeightObj?.poids ?? 1);
+      // console.log(
+      //   " Heure:",
+      //   hour,
+      //   "|  Type jour:",
+      //   dayType,
+      //   "|  Prix base:",
+      //   prixBase
+      // );
 
       return prixBase * distance * poids * prixVoiture;
     };

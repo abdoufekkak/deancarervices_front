@@ -20,6 +20,8 @@ import "../GoogleMaps/GoogleMaps.css";
 export default function MapsAndCard() {
   const [distance, setDistance] = useState("");
   const isLargeScreen = useMediaQuery("(min-width:1280px)");
+  const step1 = useSelector((state) => state.process.step1Data);
+  const isByHour = !!step1?.byHour;
 
   return (
     <>
@@ -32,7 +34,7 @@ export default function MapsAndCard() {
           <Box className="map-left">
             <Steps />
 
-            <GoogleMaps />
+            {!isByHour && <GoogleMaps />}
 
             {distance && (
               <div className="distance-info">Distance: {distance}</div>

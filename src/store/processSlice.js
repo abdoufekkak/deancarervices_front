@@ -1,16 +1,15 @@
 // store/processSlice.ts
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-  step1Data: {id:2},
+  step1Data: { id: 2 },
   step2Data: {},
   step3Data: {},
   step4Data: {},
-
 };
 
 const processSlice = createSlice({
-  name: 'process',
+  name: "process",
   initialState,
   reducers: {
     setStep1Data: (state, action) => {
@@ -25,9 +24,19 @@ const processSlice = createSlice({
     setStep4Data: (state, action) => {
       state.step4Data = action.payload;
     },
+    setStep5Data: (state, action) => {
+      state.step4Data = action.payload;
+    },
     resetProcess: () => initialState,
   },
 });
 
-export const { setStep1Data, setStep2Data, setStep3Data,setStep4Data, resetProcess } = processSlice.actions;
+export const {
+  setStep1Data,
+  setStep2Data,
+  setStep3Data,
+  setStep4Data,
+  setStep5Data,
+  resetProcess,
+} = processSlice.actions;
 export default processSlice.reducer;

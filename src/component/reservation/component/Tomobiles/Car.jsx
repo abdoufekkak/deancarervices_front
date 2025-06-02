@@ -42,12 +42,12 @@ const CarCard = ({ car, isSelected, onSelect }) => {
   }, [dispatch]);
 
   useEffect(() => {
-    console.log("🔍 Effect triggered - Recalculating price");
+    // console.log("🔍 Effect triggered - Recalculating price");
     if (calculatePrice !== null) {
       setCalculatedPrice(calculatePrice);
-      console.log("✅ Prix calculé:", calculatePrice);
+      // console.log(" Prix calculé:", calculatePrice);
     } else {
-      console.log("⛔ Prix non calculé, données manquantes");
+      // console.log(" Prix non calculé, données manquantes");
     }
   }, [calculatePrice]);
 

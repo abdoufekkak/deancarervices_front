@@ -28,12 +28,31 @@ import { useSelector, useDispatch } from "react-redux";
 import { setStep1Data } from "../store/processSlice";
 
 function DeanSummary() {
-  const [showReturn, setShowReturn] = useState(false);
+  const step1Data = useSelector((state) => state.process.step1Data);
+
+  const [showReturn, setShowReturn] = useState(
+    step1Data?.returnDate && step1Data?.returnTime ? true : false
+  );
   const [returnDate, setReturnDate] = useState(null);
   const [returnTime, setReturnTime] = useState(null);
-  const dispatch = useDispatch();
 
-  const step1Data = useSelector((state) => state.process.step1Data);
+  useEffect(() => {
+    if (step1Data?.returnDate) {
+      const [day, month, year] = step1Data.returnDate.split("/").map(Number);
+      const dateObj = new Date(year, month - 1, day);
+      setReturnDate(dateObj);
+      setShowReturn(true);
+    }
+    if (step1Data?.returnTime) {
+      const [hours, minutes] = step1Data.returnTime.split(":").map(Number);
+      const now = new Date();
+      now.setHours(hours, minutes, 0, 0);
+      setReturnTime(now);
+      setShowReturn(true);
+    }
+  }, [step1Data.returnDate, step1Data.returnTime]);
+
+  const dispatch = useDispatch();
 
   const {
     from,
@@ -45,40 +64,30 @@ function DeanSummary() {
     returnTime: storeReturnTime,
   } = step1Data || {};
 
-  const safeToDate = (val) => {
-    const d = new Date(val);
-    return isNaN(d) ? null : d;
-  };
-
   useEffect(() => {
-    if (storeReturnDate && storeReturnTime) {
-      const d = safeToDate(storeReturnDate);
-      const t = safeToDate(storeReturnTime);
-      if (d && t) {
-        setShowReturn(true);
-        setReturnDate(d);
-        setReturnTime(t);
-      }
-    }
-  }, [storeReturnDate, storeReturnTime]);
-
-  useEffect(() => {
-    if (returnDate) {
+    if (returnDate instanceof Date && !isNaN(returnDate)) {
+      const formattedDate = returnDate
+        .toLocaleDateString("fr-FR")
+        .split("/")
+        .join("/");
       dispatch(
         setStep1Data({
           ...step1Data,
-          returnDate: returnDate.toISOString(),
+          returnDate: formattedDate,
         })
       );
     }
   }, [returnDate]);
 
   useEffect(() => {
-    if (returnTime) {
+    if (returnTime instanceof Date && !isNaN(returnTime)) {
+      const hours = returnTime.getHours().toString().padStart(2, "0");
+      const minutes = returnTime.getMinutes().toString().padStart(2, "0");
+      const formattedTime = `${hours}:${minutes}`; // ex: "05:00"
       dispatch(
         setStep1Data({
           ...step1Data,
-          returnTime: returnTime.toISOString(),
+          returnTime: formattedTime,
         })
       );
     }
@@ -155,20 +164,38 @@ function DeanSummary() {
           >
             Book smart! Add a return journey
           </Typography>
-          <Button
-            variant="contained"
-            fullWidth
-            startIcon={<CompareArrows />}
-            sx={{
-              background: "linear-gradient(to right, #0a97b0, #0a97b0)",
-              color: "white",
-              fontWeight: "bold",
-              mb: 2,
-            }}
-            onClick={() => {
-              if (showReturn) {
+          {!storeReturnDate || !storeReturnTime ? (
+            <Button
+              variant="contained"
+              fullWidth
+              startIcon={<CompareArrows />}
+              sx={{
+                background: "linear-gradient(to right, #0a97b0, #0a97b0)",
+                color: "white",
+                fontWeight: "bold",
+                mb: 2,
+              }}
+              onClick={() => {
+                setShowReturn(true);
+              }}
+            >
+              ADD A RETURN
+            </Button>
+          ) : (
+            <Button
+              variant="contained"
+              fullWidth
+              startIcon={<CompareArrows />}
+              sx={{
+                background: "linear-gradient(to right, #0a97b0, #0a97b0)",
+                color: "white",
+                fontWeight: "bold",
+                mb: 2,
+              }}
+              onClick={() => {
                 setReturnDate(null);
                 setReturnTime(null);
+                setShowReturn(false);
                 dispatch(
                   setStep1Data({
                     ...step1Data,
@@ -176,12 +203,11 @@ function DeanSummary() {
                     returnTime: null,
                   })
                 );
-              }
-              setShowReturn((prev) => !prev);
-            }}
-          >
-            {showReturn ? "REMOVE RETURN" : "ADD A RETURN"}
-          </Button>
+              }}
+            >
+              REMOVE RETURN
+            </Button>
+          )}
 
           {showReturn && (
             <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>

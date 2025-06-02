@@ -34,7 +34,7 @@ function NavBar() {
           </IconButton> */}
           {!isMobile && (
             <Typography className="booking-text" sx={{ color: "#0a97b0" }}>
-              English
+              Welcome aboard!
             </Typography>
           )}
         </Box>

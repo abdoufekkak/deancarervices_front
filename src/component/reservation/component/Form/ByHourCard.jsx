@@ -22,33 +22,68 @@ import {
   TimePicker,
 } from "@mui/x-date-pickers";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
-import { useNavigate } from "react-router-dom"; // Importing useNavigate
+import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { setStep1Data } from "../../../../store/processSlice";
+import GooglePlacesAutocomplete from "./GooglePlacesAutocomplete"; // Assure-toi que ce composant est bien importé
 
 function ByHourCard() {
+  const [from, setFrom] = useState("");
+  const [to, setTo] = useState("defined by driver");
   const [pickupDate, setPickupDate] = useState(new Date());
   const [pickupTime, setPickupTime] = useState(new Date());
   const [passengers, setPassengers] = useState(2);
-  const [duration, setDuration] = useState(1); // Duration in hours
+  const [duration, setDuration] = useState(1);
 
-  const navigate = useNavigate(); // Initialize useNavigate
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const handleSearch = () => {
-    // When search is clicked, navigate to /map and pass the state
-    navigate("/map", {
-      state: {
-        pickupDate,
-        pickupTime,
-        duration,
-        passengers,
-      },
-    });
+    const formatDate = (date) => {
+      if (!date) return null;
+      const d = new Date(date);
+      if (isNaN(d.getTime())) return null; // <- ajout essentiel
+      return `${String(d.getDate()).padStart(2, "0")}/${String(
+        d.getMonth() + 1
+      ).padStart(2, "0")}/${d.getFullYear()}`;
+    };
+
+    const formatTime = (time) => {
+      if (!time) return null;
+      const t = new Date(time);
+      if (isNaN(t.getTime())) return null; // <- ajout essentiel
+      return `${String(t.getHours()).padStart(2, "0")}:${String(
+        t.getMinutes()
+      ).padStart(2, "0")}`;
+    };
+
+    const data = {
+      from,
+      pickupDate: formatDate(pickupDate),
+      pickupTime: formatTime(pickupTime),
+      duration,
+      passengers,
+      byHour: true,
+    };
+
+    dispatch(setStep1Data(data));
+    console.log("Dispatched step1Data:", data);
+
+    navigate("/map", { state: data });
   };
 
   return (
     <LocalizationProvider dateAdapter={AdapterDateFns}>
       <Box sx={{ mt: 2 }}>
+        {/* From & To Autocomplete */}
+        <GooglePlacesAutocomplete
+          label="From"
+          value={from}
+          onChange={setFrom}
+        />
+
         {/* Date & Time Pickers */}
-        <Box sx={{ display: "flex", gap: 2 }}>
+        <Box sx={{ display: "flex", gap: 2, mt: 2 }}>
           <DatePicker
             label="Pickup date"
             value={pickupDate}
@@ -160,7 +195,7 @@ function ByHourCard() {
           fullWidth
           startIcon={<Search />}
           sx={{ mt: 3, backgroundColor: "#0a97b0", color: "white" }}
-          onClick={handleSearch} // Trigger the handleSearch function on click
+          onClick={handleSearch}
         >
           SEARCH
         </Button>
