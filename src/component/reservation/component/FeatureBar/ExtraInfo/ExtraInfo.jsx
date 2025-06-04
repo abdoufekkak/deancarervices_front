@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Box,
   Card,
@@ -20,7 +20,8 @@ import "./ExtraInfo.css";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { setStep3Data } from "../../../../../store/processSlice";
-import { setStep5Data } from "../../../../../store/processSlice";
+import { setStep2Data } from "../../../../../store/processSlice";
+
 import useReservation from "../../../hook/useReservation";
 import usePriceCalculator from "../../Tomobiles/hooks/usePriceCalculator";
 import useTour from "../../../hook/useTour";
@@ -42,7 +43,9 @@ function ExtraInfo() {
   const step1Data = useSelector((state) => state.process.step1Data);
   const step2Data = useSelector((state) => state.process.step2Data);
   const step3Data = useSelector((state) => state.process.step3Data);
-  const step5Data = useSelector((state) => state.process.step5Data);
+  // const step4Data = useSelector((state) => state.process.step4Data);
+
+  const price = usePriceCalculator(step2Data);
 
   const handleExtraInfoSubmit = async (values) => {
     dispatch(setStep3Data(values));
@@ -63,7 +66,7 @@ function ExtraInfo() {
       pickupTime: step1Data?.pickupTime,
       passengers: step1Data?.passengers,
       total: step2Data?.total,
-      etat: "Confirmée",
+      etat: "En attente ",
       typeVehicule: step2Data?.typeVehicule,
       depart: step1Data?.from,
       distance: step1Data?.distance,
@@ -78,6 +81,7 @@ function ExtraInfo() {
       arrivee: step1Data?.to,
     };
 
+    console.log("prix", step2Data?.total);
     try {
       const response = isByHour
         ? await addTour(commonPayload)

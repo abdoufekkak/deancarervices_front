@@ -41,16 +41,6 @@ const CarCard = ({ car, isSelected, onSelect }) => {
     dispatch(fetchStep4Data());
   }, [dispatch]);
 
-  useEffect(() => {
-    // console.log("🔍 Effect triggered - Recalculating price");
-    if (calculatePrice !== null) {
-      setCalculatedPrice(calculatePrice);
-      // console.log(" Prix calculé:", calculatePrice);
-    } else {
-      // console.log(" Prix non calculé, données manquantes");
-    }
-  }, [calculatePrice]);
-
   return (
     <Card className={`car-card ${isMobile ? "mobile" : ""}`}>
       <Box className={`car-image-box ${isMobile ? "mobile" : ""}`}>
