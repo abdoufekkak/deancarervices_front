@@ -24,9 +24,7 @@ const processSlice = createSlice({
     setStep4Data: (state, action) => {
       state.step4Data = action.payload;
     },
-    setStep5Data: (state, action) => {
-      state.step4Data = action.payload;
-    },
+
     resetProcess: () => initialState,
   },
 });

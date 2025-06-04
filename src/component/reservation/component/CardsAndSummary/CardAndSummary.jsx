@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import CardInfo from "../CardInfo/CardInfo"; // ← adapte selon ton projet
-import DeanSummary from "../../../../summary/Summary"; // ← adapte selon ton projet
-import "../CardInfo/CardInfo.css"; // ← pour garder le même style
+import CardInfo from "../CardInfo/CardInfo";
+import DeanSummary from "../../../../summary/Summary";
+import "../CardInfo/CardInfo.css";
 import {
   Box,
   Card,
@@ -35,7 +35,7 @@ export default function CardAndSummary() {
           <Steps activeStep={2} completedSteps={[0, 1]} />
 
           {selectedCar && (
-            <Box sx={{ mb: 2 }}>
+            <Box>
               <CarCard
                 car={selectedCar}
                 isSelected={true}

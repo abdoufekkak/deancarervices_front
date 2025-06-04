@@ -63,6 +63,7 @@ function DeanSummary() {
     returnDate: storeReturnDate,
     returnTime: storeReturnTime,
   } = step1Data || {};
+  const isByHour = !!step1Data?.byHour;
 
   useEffect(() => {
     if (returnDate instanceof Date && !isNaN(returnDate)) {
@@ -155,59 +156,62 @@ function DeanSummary() {
         <Divider sx={{ my: 2 }} />
 
         <LocalizationProvider dateAdapter={AdapterDateFns}>
-          <Typography
-            variant="caption"
-            display="block"
-            textAlign="center"
-            color="#0a97b0"
-            mb={1}
-          >
-            Book smart! Add a return journey
-          </Typography>
-          {!storeReturnDate || !storeReturnTime ? (
-            <Button
-              variant="contained"
-              fullWidth
-              startIcon={<CompareArrows />}
-              sx={{
-                background: "linear-gradient(to right, #0a97b0, #0a97b0)",
-                color: "white",
-                fontWeight: "bold",
-                mb: 2,
-              }}
-              onClick={() => {
-                setShowReturn(true);
-              }}
+          {!isByHour && (
+            <Typography
+              variant="caption"
+              display="block"
+              textAlign="center"
+              color="#0a97b0"
+              mb={1}
             >
-              ADD A RETURN
-            </Button>
-          ) : (
-            <Button
-              variant="contained"
-              fullWidth
-              startIcon={<CompareArrows />}
-              sx={{
-                background: "linear-gradient(to right, #0a97b0, #0a97b0)",
-                color: "white",
-                fontWeight: "bold",
-                mb: 2,
-              }}
-              onClick={() => {
-                setReturnDate(null);
-                setReturnTime(null);
-                setShowReturn(false);
-                dispatch(
-                  setStep1Data({
-                    ...step1Data,
-                    returnDate: null,
-                    returnTime: null,
-                  })
-                );
-              }}
-            >
-              REMOVE RETURN
-            </Button>
+              Book smart! Add a return journey
+            </Typography>
           )}
+          {!isByHour &&
+            (!storeReturnDate || !storeReturnTime ? (
+              <Button
+                variant="contained"
+                fullWidth
+                startIcon={<CompareArrows />}
+                sx={{
+                  background: "linear-gradient(to right, #0a97b0, #0a97b0)",
+                  color: "white",
+                  fontWeight: "bold",
+                  mb: 2,
+                }}
+                onClick={() => {
+                  setShowReturn(true);
+                }}
+              >
+                ADD A RETURN
+              </Button>
+            ) : (
+              <Button
+                variant="contained"
+                fullWidth
+                startIcon={<CompareArrows />}
+                sx={{
+                  background: "linear-gradient(to right, #0a97b0, #0a97b0)",
+                  color: "white",
+                  fontWeight: "bold",
+                  mb: 2,
+                }}
+                onClick={() => {
+                  setReturnDate(null);
+                  setReturnTime(null);
+                  setShowReturn(false);
+                  dispatch(
+                    setStep1Data({
+                      ...step1Data,
+                      returnDate: null,
+                      returnTime: null,
+                    })
+                  );
+                }}
+              >
+                REMOVE RETURN
+              </Button>
+            ))}
 
           {showReturn && (
             <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>

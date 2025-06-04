@@ -67,7 +67,6 @@ function ByHourCard() {
     };
 
     dispatch(setStep1Data(data));
-    console.log("Dispatched step1Data:", data);
 
     navigate("/map", { state: data });
   };

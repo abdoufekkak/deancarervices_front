@@ -1,5 +1,6 @@
 import { useSelector, useDispatch } from "react-redux";
 import { useMemo, useEffect } from "react";
+import { setStep2Data } from "../../../../../store/processSlice";
 
 function usePriceCalculator(car) {
   const dispatch = useDispatch();
@@ -20,7 +21,7 @@ function usePriceCalculator(car) {
       hasPrices: Array.isArray(step4?.prices) && step4.prices.length > 0,
       hasDayWeights:
         Array.isArray(step4?.dayWeights) && step4.dayWeights.length > 0,
-      hourlyRate,
+      hasHourlyRate: step4.hourlyRates?.rows?.[0]?.priceByHour !== undefined,
       ...(isByHour
         ? {
             hasDuration: !!step1?.duration,
@@ -118,7 +119,11 @@ function usePriceCalculator(car) {
       retour: retour > 0 ? retour.toFixed(2) : null,
     };
   }, [step1, step4, car]);
-
+  useEffect(() => {
+    if (calculatePrice) {
+      dispatch(setStep2Data(calculatePrice));
+    }
+  }, [calculatePrice, dispatch]);
   return calculatePrice;
 }
 
