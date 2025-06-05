@@ -18,12 +18,9 @@ import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/material.css";
 import "./ExtraInfo.css";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
 import { setStep3Data } from "../../../../../store/processSlice";
-import { setStep2Data } from "../../../../../store/processSlice";
 
 import useReservation from "../../../hook/useReservation";
-import usePriceCalculator from "../../Tomobiles/hooks/usePriceCalculator";
 import useTour from "../../../hook/useTour";
 const validationSchema = Yup.object().shape({
   firstName: Yup.string().required("Name is required"),
@@ -33,7 +30,6 @@ const validationSchema = Yup.object().shape({
 });
 
 function ExtraInfo() {
-  const navigate = useNavigate();
   const dispatch = useDispatch();
   const { addReservation } = useReservation();
   const { addTour } = useTour();
@@ -45,7 +41,6 @@ function ExtraInfo() {
   const step3Data = useSelector((state) => state.process.step3Data);
   // const step4Data = useSelector((state) => state.process.step4Data);
 
-  const price = usePriceCalculator(step2Data);
 
   const handleExtraInfoSubmit = async (values) => {
     dispatch(setStep3Data(values));

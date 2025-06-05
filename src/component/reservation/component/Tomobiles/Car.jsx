@@ -14,33 +14,20 @@ import { People, Work, CheckCircle } from "@mui/icons-material";
 import img1 from "../../../../assets/img1.jpg"; // Remplace par une image par défaut
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { setStep2Data } from "../../../../store/processSlice";
-import fetchStep4Data from "../../component/Tomobiles/hooks/fetchStep4Data.jsx";
-import { useSelector } from "react-redux";
+import { setStep2Data,  } from "../../../../store/processSlice";
 
 import "./Car.css";
-import CardInfo from "../../../reservation/component/CardInfo/CardInfo.jsx";
-import usePriceCalculator from "../../component/Tomobiles/hooks/usePriceCalculator";
 
 const CarCard = ({ car, isSelected, onSelect }) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  setStep2Data;
   const handleSelect = () => {
     dispatch(setStep2Data(car)); // enregistre la voiture sélectionnée
     navigate("/info"); // redirige vers la page info
   };
-
-  const calculatePrice = usePriceCalculator(car);
-  const [calculatedPrice, setCalculatedPrice] = useState(null);
-  // console.log("CarCard: car =", car);
-  // console.log("CarCard: calculatePrice =", calculatePrice);
-  useEffect(() => {
-    dispatch(fetchStep4Data());
-  }, [dispatch]);
-
+  
   return (
     <Card className={`car-card ${isMobile ? "mobile" : ""}`}>
       <Box className={`car-image-box ${isMobile ? "mobile" : ""}`}>
@@ -108,18 +95,18 @@ const CarCard = ({ car, isSelected, onSelect }) => {
 
         <Box>
           <Typography className="car-price" variant="h5" fontWeight="bold">
-            {calculatePrice
-              ? `$${calculatePrice.total ?? calculatePrice.aller}`
+            {car
+              ? `$${car.total ?? car.aller}`
               : "Chargement..."}
           </Typography>
 
-          {calculatePrice && (
+          {car && (
             <Typography
               variant="body2"
               color="text.secondary"
               sx={{ fontSize: "0.85rem", mt: 0.5 }}
             >
-              {calculatePrice.retour ? "(aller / retour)" : "(aller simple)"}
+              {car.retour ? "(aller / retour)" : "(aller simple)"}
             </Typography>
           )}
         </Box>

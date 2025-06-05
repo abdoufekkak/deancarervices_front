@@ -2,22 +2,44 @@ import React, { useEffect, useState } from "react";
 import { Box, CircularProgress, Typography } from "@mui/material";
 import useCars from "./hooks/useCare";
 import CarCard from "./Car";
+import { useSelector, useDispatch } from "react-redux";
+import { setStep2Data } from "../../../../store/processSlice";
+import { calculatePrice } from "./hooks/usePriceCalculator";
 
 const CarsList = () => {
   const { isLoading, error, fetchCars } = useCars();
   const [cars, setCars] = useState([]);
-  const [selectedCarId, setSelectedCarId] = useState(null); // <- Ajout ici
+  const [selectedCarId, setSelectedCarId] = useState(null);
 
-  useEffect(() => {
-    fetchCars()
-      .then((cars) => {
-        // console.log(cars);
-        setCars(cars);
-      })
-      .catch((e) => {
-        console.error("Erreur :", e);
-      });
-  }, [fetchCars]);
+  const step1 = useSelector((state) => state.process.step1Data);
+  const step4 = useSelector((state) => state.process.step4Data);
+  const dispatch = useDispatch();
+
+useEffect(() => {
+  fetchCars()
+    .then((data) => {
+      const carsWithPrice = data
+        .map((car) => {
+          const price = calculatePrice(car, step1, step4);
+          if (price) {
+            return { ...car, ...price };
+          }
+          return null;
+        })
+        .filter(Boolean); // Enlève les null
+
+      // Facultatif : stocker le premier calcul dans redux
+      if (carsWithPrice.length > 0) {
+        dispatch(setStep2Data(carsWithPrice[0]));
+      }
+
+      setCars(carsWithPrice);
+    })
+    .catch((e) => {
+      console.error("Erreur :", e);
+    });
+}, [step1, step4]);
+
 
   if (isLoading) {
     return (
@@ -37,19 +59,20 @@ const CarsList = () => {
   if (error) {
     return (
       <Typography color="error" align="center">
-        {error}
+        erreur de chargement
       </Typography>
     );
   }
 
   return (
     <Box sx={{ display: "flex", flexWrap: "wrap", justifyContent: "center" }}>
-      {cars.map((car) => (
+      {cars && cars.map((car) => (
         <CarCard
           key={car.id}
           car={car}
-          isSelected={selectedCarId === car.id} // <- on vérifie si c’est sélectionné
-          onSelect={() => setSelectedCarId(car.id)} // <- callback pour sélectionner
+          price={car.price} // 👈 tu passes le prix déjà calculé
+          isSelected={selectedCarId === car.id}
+          onSelect={() => setSelectedCarId(car.id)}
         />
       ))}
     </Box>

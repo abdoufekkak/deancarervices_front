@@ -22,6 +22,7 @@ const processSlice = createSlice({
       state.step3Data = action.payload;
     },
     setStep4Data: (state, action) => {
+
       state.step4Data = action.payload;
     },
 

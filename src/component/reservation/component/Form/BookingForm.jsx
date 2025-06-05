@@ -30,12 +30,14 @@ import {
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { Formik } from "formik";
 import * as Yup from "yup";
-import { setStep1Data } from "../../../../store/processSlice";
+import { setStep1Data, setStep4Data } from "../../../../store/processSlice";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import GooglePlacesAutocomplete from "./GooglePlacesAutocomplete";
 import "./BookingForm.css";
 import ByHourCard from "./ByHourCard";
+import usePrice from "../Tomobiles/hooks/calculatePrice";
+import { CircularProgress } from "@mui/material";
 
 const validationSchema = Yup.object().shape({
   from: Yup.string().required("From is required"),
@@ -50,11 +52,13 @@ const validationSchema = Yup.object().shape({
 });
 
 function BookingForm() {
+
   const [tab, setTab] = useState(0);
   const [showReturn, setShowReturn] = useState(false);
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [type, setType] = useState(0);
+   
 
   return (
     <LocalizationProvider dateAdapter={AdapterDateFns}>
