@@ -22,7 +22,9 @@ export default function MapsAndCard() {
   const isLargeScreen = useMediaQuery("(min-width:1280px)");
   const step1 = useSelector((state) => state.process.step1Data);
   const isByHour = !!step1?.byHour;
-
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
   return (
     <>
       <Box sx={{ backgroundColor: "#f5f7fa" }}>

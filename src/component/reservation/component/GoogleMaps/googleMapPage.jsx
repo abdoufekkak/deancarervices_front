@@ -33,6 +33,7 @@ const GoogleMaps = () => {
   const animationRef = useRef(null);
   const dispatch = useDispatch();
   const currentStep1Data = useSelector((state) => state.process.step1Data);
+  const [mapLoading, setMapLoading] = useState(true);
 
   const geocoder = useRef(null);
   const isLargeScreen = useMediaQuery("(min-width:1280px)");
@@ -113,6 +114,7 @@ const GoogleMaps = () => {
                 mapContainerClassName="google-map-container"
                 center={origin}
                 zoom={10}
+                onLoad={() => setMapLoading(false)}
                 options={{
                   disableDefaultUI: true,
                   gestureHandling: "none",

@@ -11,10 +11,10 @@ import {
   useTheme,
 } from "@mui/material";
 import { People, Work, CheckCircle } from "@mui/icons-material";
-import img1 from "../../../../assets/img1.jpg"; // Remplace par une image par défaut
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { setStep2Data,  } from "../../../../store/processSlice";
+import { setStep2Data } from "../../../../store/processSlice";
+import { getImageByType } from "../../../../utils/ulis";
 
 import "./Car.css";
 
@@ -24,17 +24,17 @@ const CarCard = ({ car, isSelected, onSelect }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const handleSelect = () => {
-    dispatch(setStep2Data(car)); // enregistre la voiture sélectionnée
-    navigate("/info"); // redirige vers la page info
+    dispatch(setStep2Data(car));
+    navigate("/info");
   };
-  
+
   return (
     <Card className={`car-card ${isMobile ? "mobile" : ""}`}>
       <Box className={`car-image-box ${isMobile ? "mobile" : ""}`}>
         <CardMedia
           className={`car-image ${isMobile ? "mobile" : ""}`}
           component="img"
-          image={img1}
+          image={getImageByType(car.typeVehicule)}
           alt="Car"
         />
         <Typography className="car-brand" variant="subtitle2">
@@ -95,9 +95,7 @@ const CarCard = ({ car, isSelected, onSelect }) => {
 
         <Box>
           <Typography className="car-price" variant="h5" fontWeight="bold">
-            {car
-              ? `$${car.total ?? car.aller}`
-              : "Chargement..."}
+            {car ? `$${car.total ?? car.aller}` : "Chargement..."}
           </Typography>
 
           {car && (

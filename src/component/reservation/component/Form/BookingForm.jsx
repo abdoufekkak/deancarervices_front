@@ -41,7 +41,9 @@ import { CircularProgress } from "@mui/material";
 
 const validationSchema = Yup.object().shape({
   from: Yup.string().required("From is required"),
-  to: Yup.string().required("To is required"),
+  to: Yup.string()
+    .required("To is required")
+    .notOneOf([Yup.ref("from")], "Destination must be different from origin"),
   pickupDate: Yup.date().required("Pickup date is required"),
   pickupTime: Yup.date().required("Pickup time is required"),
   returnDate: Yup.date().nullable(),
@@ -52,13 +54,11 @@ const validationSchema = Yup.object().shape({
 });
 
 function BookingForm() {
-
   const [tab, setTab] = useState(0);
   const [showReturn, setShowReturn] = useState(false);
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [type, setType] = useState(0);
-   
 
   return (
     <LocalizationProvider dateAdapter={AdapterDateFns}>
@@ -130,9 +130,22 @@ function BookingForm() {
             if (showReturn && values.returnDate && values.returnTime) {
               setType(1);
             } else {
-              setType(0); // pas de retour ou incomplet
+              setType(0);
             }
           }, [showReturn, values.returnDate, values.returnTime]);
+          useEffect(() => {
+            if (tab === 1) {
+              setFieldValue("from", "");
+              setFieldValue("to", "");
+              setFieldValue("pickupDate", new Date());
+              setFieldValue("pickupTime", new Date());
+              setFieldValue("returnDate", null);
+              setFieldValue("returnTime", null);
+              setFieldValue("passengers", 2);
+              setShowReturn(false);
+            }
+          }, [tab]);
+
           return (
             <form onSubmit={handleSubmit}>
               <Box className="booking-container">
@@ -152,10 +165,17 @@ function BookingForm() {
                     <GooglePlacesAutocomplete
                       label="To"
                       value={values.to}
-                      onChange={(val) => setFieldValue("to", val)}
+                      onChange={(val) => {
+                        if (val === values.from) {
+                          setFieldValue("to", "");
+                        } else {
+                          setFieldValue("to", val);
+                        }
+                      }}
                       error={touched.to && Boolean(errors.to)}
                       helperText={touched.to && errors.to}
                     />
+
                     <Box className="booking-date-time">
                       <DatePicker
                         label="Pickup date"

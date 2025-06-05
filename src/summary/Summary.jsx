@@ -168,7 +168,7 @@ function DeanSummary() {
             </Typography>
           )}
           {!isByHour &&
-            (!storeReturnDate || !storeReturnTime ? (
+            (!showReturn ? (
               <Button
                 variant="contained"
                 fullWidth

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import CardInfo from "../CardInfo/CardInfo";
 import DeanSummary from "../../../../summary/Summary";
 import "../CardInfo/CardInfo.css";
@@ -23,7 +23,9 @@ export default function CardAndSummary() {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [showExtraInfo, setShowExtraInfo] = useState(false);
   const isLargeScreen = useMediaQuery("(min-width:1280px)");
-
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
   return (
     <Box sx={{ backgroundColor: "#f5f7fa" }}>
       <Box sx={{ mx: "auto", mb: 4 }}>
