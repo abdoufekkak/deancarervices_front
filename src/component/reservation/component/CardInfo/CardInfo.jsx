@@ -18,7 +18,6 @@ import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { setStep3Data } from "../../../../store/processSlice";
 import { useDispatch } from "react-redux";
-import Steps from "../../../../Steps/Steps";
 import "./CardInfo.css";
 
 function CardInfo() {

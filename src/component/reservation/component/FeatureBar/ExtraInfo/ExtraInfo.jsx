@@ -19,6 +19,7 @@ import "react-phone-input-2/lib/material.css";
 import "./ExtraInfo.css";
 import { useDispatch, useSelector } from "react-redux";
 import { setStep3Data } from "../../../../../store/processSlice";
+import { useNavigate } from "react-router-dom";
 
 import useReservation from "../../../hook/useReservation";
 import useTour from "../../../hook/useTour";
@@ -41,54 +42,12 @@ function ExtraInfo() {
   const step3Data = useSelector((state) => state.process.step3Data);
   // const step4Data = useSelector((state) => state.process.step4Data);
 
-
   const handleExtraInfoSubmit = async (values) => {
-    dispatch(setStep3Data(values));
-    console.log("Submitted:", values);
-    console.log("Step1:", step1Data);
-    console.log("Step2:", step2Data);
-    console.log("Step3:", step3Data);
-
-    const isByHour = !!step1Data?.byHour;
-    const fullName = `${values.firstName} ${values.lastName}`;
-
-    const commonPayload = {
-      email: values.email,
-      phone: values.phone,
-      fullName,
-      voitureId: step2Data?.id,
-      pickupDate: step1Data?.pickupDate,
-      pickupTime: step1Data?.pickupTime,
-      passengers: step1Data?.passengers,
-      total: step2Data?.total,
-      etat: "En attente ",
-      typeVehicule: step2Data?.typeVehicule,
-      depart: step1Data?.from,
-      distance: step1Data?.distance,
-      duree: step1Data?.duration,
-    };
-
-    const fullPayload = {
-      ...commonPayload,
-      returnDate: step1Data?.returnDate,
-      returnTime: step1Data?.returnTime,
-      type: step1Data?.type,
-      arrivee: step1Data?.to,
-    };
-
-    console.log("prix", step2Data?.total);
-    try {
-      const response = isByHour
-        ? await addTour(commonPayload)
-        : await addReservation(fullPayload);
-
-      console.log(" Envoi réussi :", response);
-      setIsCollapsed(true);
-      setTimeout(() => setShowConfirmation(true), 400);
-    } catch (error) {
-      console.error("Erreur lors de l'envoi :", error);
-    }
+    dispatch(setStep3Data({ ...step3Data, ...values }));
+    navigate("/pay");
   };
+
+  const navigate = useNavigate();
 
   const formik = useFormik({
     initialValues: {

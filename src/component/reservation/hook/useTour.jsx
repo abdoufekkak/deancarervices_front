@@ -11,7 +11,7 @@ const useTour = () => {
       const response = await axios.post(`${http.apiBaseUrl}tours`, data);
       return response.data;
     } catch (err) {
-      setError("Erreur lors de la récupération des voitures");
+      setError("Erreur lors de l ajout ");
     } finally {
       setIsLoading(false);
     }

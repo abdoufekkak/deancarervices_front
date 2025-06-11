@@ -3,7 +3,7 @@ import { Box, Stepper, Step, StepLabel } from "@mui/material";
 import "./Steps.css"; // CSS file
 
 export default function Steps({ activeStep = 0, completedSteps = [] }) {
-  const steps = ["VEHICLE", "EXTRAS", "DETAILS"];
+  const steps = ["VEHICLE", "EXTRAS", "PASSENGER", "PAYMENT"];
 
   return (
     <Box className="steps-container">

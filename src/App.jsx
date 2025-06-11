@@ -6,12 +6,7 @@ import Footer from "./component/footer/Footer.jsx";
 import CardVeh from "./component/reservation/component/Tomobiles/Card.jsx";
 import NavBar from "./component/navbar/Navbar.jsx";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import DeanSummary from "./summary/Summary.jsx";
-import HelpCenter from "./component/CardHelp/HelpCenter.jsx";
-import CardInfo from "./component/reservation/component/CardInfo/CardInfo.jsx";
-import Steps from "./Steps/Steps.jsx";
 import FeatureBar from "./component/reservation/component/FeatureBar/FeatureBar.jsx";
-import ExtraInfo from "./component/reservation/component/FeatureBar/ExtraInfo/ExtraInfo.jsx";
 import { useDispatch, useSelector } from "react-redux";
 import MapsAndCard from "./component/reservation/component/MapsAndCard/MapsAndCard.jsx";
 import Header from "./component/Home/Header/Header";
@@ -22,6 +17,7 @@ import Cars from "./component/Home/Cars/Cars";
 import Reviews from "./component/Home/Reviews/Reviews";
 import CardAndSummary from "./component/reservation/component/CardsAndSummary/CardAndSummary.jsx";
 import ExtraInfoPage from "./component/reservation/component/ExtraAndSummary/ExtraAndSummary.jsx";
+import PaymentAndSummary from "./component/reservation/component/PaymentAndSummary/PaymentAndSummary.jsx";
 function App() {
   const step1Data = useSelector((state) => state.process.step1Data);
   return (
@@ -90,10 +86,10 @@ function App() {
             }
           />
           <Route
-            path="/help"
+            path="/pay"
             element={
               <>
-                <HelpCenter />
+                <PaymentAndSummary />
                 <Footer />
               </>
             }

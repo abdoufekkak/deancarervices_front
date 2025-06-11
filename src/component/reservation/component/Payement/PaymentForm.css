@@ -1,0 +1,109 @@
+.payment-form-inner-content {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.payment-method-header {
+  margin-bottom: 24px;
+  font-weight: bold;
+  font-size: 1.5rem;
+  line-height: 1.334;
+  letter-spacing: 0em;
+}
+
+.payment-logos-section {
+  display: flex;
+  align-items: center;
+  margin-bottom: 32px;
+}
+
+.card-logos-container {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.card-logo {
+  height: 24px;
+}
+
+.form-textfield-bottom-margin {
+  margin-bottom: 16px;
+}
+
+.date-cvc-group {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+.month-year-textfield {
+  flex-grow: 1;
+}
+
+.cvc-textfield {
+  width: 120px;
+  flex-shrink: 0;
+}
+
+.transfeero-wallet-section {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #f9f9f9;
+  padding: 16px; /* 2 * 8px */
+  border-radius: 4px;
+  margin-bottom: 32px; /* 4 * 8px */
+}
+
+.transfeero-wallet-switch-label {
+  margin: 0;
+}
+
+.transfeero-wallet-text {
+  display: flex;
+  align-items: center;
+  flex-grow: 1;
+  font-size: 1rem;
+  line-height: 1.5;
+  letter-spacing: 0.00938em;
+}
+
+.info-icon-button {
+  margin-left: 4px;
+  padding: 5px;
+}
+
+.secure-payment-footer {
+  text-align: center;
+  margin-top: 32px;
+}
+
+.footer-caption-text {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 0.75rem;
+  line-height: 1.66;
+  letter-spacing: 0.03333em;
+  color: rgba(0, 0, 0, 0.6);
+}
+
+.footer-logos-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.footer-logo {
+  height: 16px;
+}
+
+.footer-logo.checkout-logo {
+  height: 20px;
+}
+
+.footer-logo.encryption-logo {
+  height: 24px;
+}
