@@ -46,7 +46,6 @@ export default function PaymentAndSummary() {
             </Box>
           )}
 
-          {/* Card Formulaire */}
           <Card className="card-info">
             <CardContent className="card-content">
               <PaymentForm onContinue={() => setShowExtraInfo(true)} />

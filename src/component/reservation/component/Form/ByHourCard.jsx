@@ -1,12 +1,12 @@
-import React, { useState } from "react";
+import React from "react";
 import {
   Box,
   TextField,
-  Typography,
-  IconButton,
-  Paper,
   Button,
+  IconButton,
+  Typography,
   InputAdornment,
+  Paper,
 } from "@mui/material";
 import {
   CalendarMonth,
@@ -22,183 +22,203 @@ import {
   TimePicker,
 } from "@mui/x-date-pickers";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
+import { Formik } from "formik";
+import * as Yup from "yup";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
+import GooglePlacesAutocomplete from "./GooglePlacesAutocomplete";
 import { setStep1Data } from "../../../../store/processSlice";
-import GooglePlacesAutocomplete from "./GooglePlacesAutocomplete"; // Assure-toi que ce composant est bien importé
+
+const validationSchema = Yup.object().shape({
+  from: Yup.string().required("From is required"),
+  pickupDate: Yup.date().required("Pickup date is required"),
+  pickupTime: Yup.date().required("Pickup time is required"),
+  duration: Yup.number().min(1, "Minimum 1 hour").required("Required"),
+  passengers: Yup.number()
+    .required("Passengers is required")
+    .min(1, "At least 1 passenger"),
+});
 
 function ByHourCard() {
-  const [from, setFrom] = useState("");
-  const [to, setTo] = useState("defined by driver");
-  const [pickupDate, setPickupDate] = useState(new Date());
-  const [pickupTime, setPickupTime] = useState(new Date());
-  const [passengers, setPassengers] = useState(2);
-  const [duration, setDuration] = useState(1);
-
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const handleSearch = () => {
-    const formatDate = (date) => {
-      if (!date) return null;
-      const d = new Date(date);
-      if (isNaN(d.getTime())) return null; // <- ajout essentiel
-      return `${String(d.getDate()).padStart(2, "0")}/${String(
-        d.getMonth() + 1
-      ).padStart(2, "0")}/${d.getFullYear()}`;
-    };
-
-    const formatTime = (time) => {
-      if (!time) return null;
-      const t = new Date(time);
-      if (isNaN(t.getTime())) return null; // <- ajout essentiel
-      return `${String(t.getHours()).padStart(2, "0")}:${String(
-        t.getMinutes()
-      ).padStart(2, "0")}`;
-    };
-
-    const data = {
-      from,
-      pickupDate: formatDate(pickupDate),
-      pickupTime: formatTime(pickupTime),
-      duration,
-      passengers,
-      byHour: true,
-    };
-
-    dispatch(setStep1Data(data));
-
-    navigate("/map", { state: data });
-  };
-
   return (
     <LocalizationProvider dateAdapter={AdapterDateFns}>
-      <Box sx={{ mt: 2 }}>
-        {/* From & To Autocomplete */}
-        <GooglePlacesAutocomplete
-          label="From"
-          value={from}
-          onChange={setFrom}
-        />
+      <Formik
+        initialValues={{
+          from: "",
+          pickupDate: new Date(),
+          pickupTime: new Date(),
+          duration: 1,
+          passengers: 2,
+        }}
+        validationSchema={validationSchema}
+        onSubmit={(values) => {
+          console.log("Submitting ByHourCard values:", values);
+          const formatDate = (date) => {
+            if (!date) return null;
+            const d = new Date(date);
+            if (isNaN(d.getTime())) return null;
+            return `${String(d.getDate()).padStart(2, "0")}/${String(
+              d.getMonth() + 1
+            ).padStart(2, "0")}/${d.getFullYear()}`;
+          };
 
-        {/* Date & Time Pickers */}
-        <Box sx={{ display: "flex", gap: 2, mt: 2 }}>
-          <DatePicker
-            label="Pickup date"
-            value={pickupDate}
-            onChange={setPickupDate}
-            renderInput={(params) => (
-              <TextField
-                {...params}
-                fullWidth
-                InputProps={{
-                  ...params.InputProps,
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <CalendarMonth />
-                    </InputAdornment>
-                  ),
-                }}
+          const formatTime = (time) => {
+            if (!time) return null;
+            const t = new Date(time);
+            if (isNaN(t.getTime())) return null;
+            return `${String(t.getHours()).padStart(2, "0")}:${String(
+              t.getMinutes()
+            ).padStart(2, "0")}`;
+          };
+
+          const serializedValues = {
+            ...values,
+            pickupDate: formatDate(values.pickupDate),
+            pickupTime: formatTime(values.pickupTime),
+            byHour: true,
+          };
+
+          dispatch(setStep1Data(serializedValues));
+
+          navigate("/map", {
+            state: {
+              from: values.from,
+              pickupDate: formatDate(values.pickupDate),
+              pickupTime: formatTime(values.pickupTime),
+            },
+          });
+        }}
+      >
+        {({
+          values,
+          errors,
+          touched,
+          setFieldValue,
+          handleSubmit,
+          handleChange,
+        }) => {
+          console.log("Formik render", { values, errors, touched }); // <- Ajoute ça
+
+          return (
+            <form onSubmit={handleSubmit}>
+              <GooglePlacesAutocomplete
+                label="From"
+                value={values.from}
+                onChange={(val) => setFieldValue("from", val)}
+                error={touched.from && Boolean(errors.from)}
+                helperText={touched.from && errors.from}
               />
-            )}
-          />
-          <TimePicker
-            label="Pickup time"
-            value={pickupTime}
-            onChange={setPickupTime}
-            renderInput={(params) => (
+
+              <Box className="booking-date-time">
+                <DatePicker
+                  label="Pickup date"
+                  value={values.pickupDate}
+                  onChange={(val) => setFieldValue("pickupDate", val)}
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      fullWidth
+                      error={touched.pickupDate && Boolean(errors.pickupDate)}
+                      helperText={touched.pickupDate && errors.pickupDate}
+                      InputProps={{
+                        ...params.InputProps,
+                        startAdornment: (
+                          <InputAdornment position="start">
+                            <CalendarMonth />
+                          </InputAdornment>
+                        ),
+                      }}
+                    />
+                  )}
+                />
+                <TimePicker
+                  label="Pickup time"
+                  value={values.pickupTime}
+                  onChange={(val) => setFieldValue("pickupTime", val)}
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      fullWidth
+                      error={touched.pickupTime && Boolean(errors.pickupTime)}
+                      helperText={touched.pickupTime && errors.pickupTime}
+                      InputProps={{
+                        ...params.InputProps,
+                        startAdornment: (
+                          <InputAdornment position="start">
+                            <AccessTime />
+                          </InputAdornment>
+                        ),
+                      }}
+                    />
+                  )}
+                />
+              </Box>
+
               <TextField
-                {...params}
+                label="Duration (hours)"
+                name="duration"
+                type="number"
                 fullWidth
-                InputProps={{
-                  ...params.InputProps,
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <AccessTime />
-                    </InputAdornment>
-                  ),
-                }}
+                margin="normal"
+                value={values.duration}
+                onChange={(e) =>
+                  setFieldValue("duration", Number(e.target.value))
+                }
+                error={touched.duration && Boolean(errors.duration)}
+                helperText={touched.duration && errors.duration}
+                inputProps={{ min: 1 }}
               />
-            )}
-          />
-        </Box>
 
-        {/* Duration */}
-        <TextField
-          label="Duration (hours)"
-          type="number"
-          fullWidth
-          margin="normal"
-          value={duration}
-          onChange={(e) => setDuration(Math.max(1, parseInt(e.target.value)))}
-          inputProps={{ min: 1 }}
-          required
-        />
+              <Paper elevation={0} className="booking-passenger-box">
+                <Box>
+                  <Typography
+                    variant="subtitle2"
+                    className="booking-passenger-icon"
+                  >
+                    <People sx={{ mr: 1 }} />
+                    Passengers
+                  </Typography>
+                  <Typography fontSize="1.2rem">{values.passengers}</Typography>
+                </Box>
+                <Box>
+                  <IconButton
+                    onClick={() =>
+                      setFieldValue(
+                        "passengers",
+                        Math.max(1, values.passengers - 1)
+                      )
+                    }
+                    className="passenger-btn-minus"
+                  >
+                    <Remove />
+                  </IconButton>
+                  <IconButton
+                    onClick={() =>
+                      setFieldValue("passengers", values.passengers + 1)
+                    }
+                    className="passenger-btn-plus"
+                  >
+                    <Add />
+                  </IconButton>
+                </Box>
+              </Paper>
 
-        {/* Passengers */}
-        <Paper
-          elevation={0}
-          sx={{
-            backgroundColor: "#eeeeee",
-            p: 2,
-            borderRadius: 2,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-            mt: 2,
-          }}
-        >
-          <Box>
-            <Typography
-              variant="subtitle2"
-              color="text.secondary"
-              sx={{ display: "flex", alignItems: "center", mb: 1 }}
-            >
-              <People sx={{ mr: 1 }} />
-              Passengers
-            </Typography>
-            <Typography fontSize="1.2rem">{passengers}</Typography>
-          </Box>
-          <Box>
-            <IconButton
-              onClick={() => setPassengers((prev) => Math.max(1, prev - 1))}
-              sx={{
-                backgroundColor: "#9e9e9e",
-                color: "white",
-                "&:hover": { backgroundColor: "#757575" },
-                mr: 1,
-                width: 32,
-                height: 32,
-              }}
-            >
-              <Remove />
-            </IconButton>
-            <IconButton
-              onClick={() => setPassengers((prev) => prev + 1)}
-              sx={{
-                backgroundColor: "#212121",
-                color: "white",
-                "&:hover": { backgroundColor: "#000" },
-                width: 32,
-                height: 32,
-              }}
-            >
-              <Add />
-            </IconButton>
-          </Box>
-        </Paper>
-
-        {/* Search Button */}
-        <Button
-          variant="contained"
-          fullWidth
-          startIcon={<Search />}
-          sx={{ mt: 3, backgroundColor: "#0a97b0", color: "white" }}
-          onClick={handleSearch}
-        >
-          SEARCH
-        </Button>
-      </Box>
+              <Button
+                variant="contained"
+                fullWidth
+                startIcon={<Search />}
+                type="submit"
+                className="booking-search-btn"
+              >
+                SEARCH
+              </Button>
+            </form>
+          );
+        }}
+      </Formik>
     </LocalizationProvider>
   );
 }
