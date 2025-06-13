@@ -5,34 +5,40 @@ import "../css/style.css";
 import "../css/font-awesome.min.css";
 import slider_bg from "../../../assets/slider-bg.jpg";
 import BookingForm from "../../reservation/component/Form/BookingForm.jsx";
+import ByHourCard from "../../reservation/component/Form/ByHourCard.jsx";
 import usePrice from "../../reservation/component/Tomobiles/hooks/calculatePrice.jsx";
 import { useDispatch, useSelector } from "react-redux";
 import { setStep4Data } from "../../../store/processSlice.js";
 import { Box, CircularProgress } from "@mui/material";
 
 function Header() {
-   const [loading, setLoading] = useState(true);
-    const {fetchAllprice}=usePrice();
- const dispatch = useDispatch(); // en haut de ton composant
+  const [loading, setLoading] = useState(true);
+  const { fetchAllprice } = usePrice();
+  const dispatch = useDispatch(); // en haut de ton composant
 
-useEffect(() => {
-  setLoading(true);
-  fetchAllprice()
-    .then((data) => {
-      console.log("✅ Données reçues:", data);
-      dispatch(setStep4Data({ ...data })); // ✅ Voilà la bonne utilisation
-    })
-    .catch((e) => {
-      console.log(e);
-    })
-    .finally(() => {
-      setLoading(false);
-    });
-}, []);
+  useEffect(() => {
+    setLoading(true);
+    fetchAllprice()
+      .then((data) => {
+        console.log("✅ Données reçues:", data);
+        dispatch(setStep4Data({ ...data })); // ✅ Voilà la bonne utilisation
+      })
+      .catch((e) => {
+        console.log(e);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  }, []);
 
   if (loading) {
     return (
-      <Box display="flex" justifyContent="center" alignItems="center" height="60vh">
+      <Box
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+        height="60vh"
+      >
         <CircularProgress />
       </Box>
     );

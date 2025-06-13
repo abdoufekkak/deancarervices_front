@@ -1,13 +1,6 @@
 // src/pages/ExtraInfoPage.jsx
 import React, { useState, useEffect } from "react";
-import {
-  Box,
-  Grid,
-  Card,
-  CardContent,
-  useMediaQuery,
-  Typography,
-} from "@mui/material";
+import { Box, Grid, Card, CardContent, Typography } from "@mui/material";
 import FeatureBar from "../FeatureBar/FeatureBar";
 import CarCard from "../Tomobiles/Car";
 import ExtraInfo from "../FeatureBar/ExtraInfo/ExtraInfo";
@@ -21,7 +14,6 @@ export default function ExtraInfoPage() {
   const [extraInfoCollapsed, setExtraInfoCollapsed] = useState(false);
   const [isCollapsed, setIsCollapsed] = useState(true);
   const selectedCar = useSelector((state) => state.process.step2Data);
-  const isLargeScreen = useMediaQuery("(min-width:1280px)");
   const navigate = useNavigate();
 
   const handleToggle = () => {
@@ -74,11 +66,9 @@ export default function ExtraInfoPage() {
           </Card>
         </Grid>
 
-        {isLargeScreen && (
-          <Grid item md={4}>
-            <DeanSummary />
-          </Grid>
-        )}
+        <Grid item xs={12} md={4}>
+          <DeanSummary />
+        </Grid>
       </Grid>
     </Box>
   );

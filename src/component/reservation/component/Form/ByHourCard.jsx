@@ -86,8 +86,8 @@ function ByHourCard() {
           navigate("/map", {
             state: {
               from: values.from,
-              pickupDate: formatDate(values.pickupDate),
-              pickupTime: formatTime(values.pickupTime),
+              pickupDate: values.pickupDate,
+              pickupTime: values.pickupTime,
             },
           });
         }}

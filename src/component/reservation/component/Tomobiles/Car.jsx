@@ -1,15 +1,4 @@
-// src/components/CarCard.js
-import { useEffect, useState } from "react";
-import {
-  Box,
-  Card,
-  CardMedia,
-  Typography,
-  Chip,
-  Button,
-  useMediaQuery,
-  useTheme,
-} from "@mui/material";
+import { Card, CardMedia, Typography, Chip, Button, Box } from "@mui/material";
 import { People, Work, CheckCircle } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
@@ -19,20 +8,19 @@ import { getImageByType } from "../../../../utils/ulis";
 import "./Car.css";
 
 const CarCard = ({ car, isSelected, onSelect }) => {
-  const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const navigate = useNavigate();
   const dispatch = useDispatch();
+
   const handleSelect = () => {
     dispatch(setStep2Data(car));
     navigate("/info");
   };
 
   return (
-    <Card className={`car-card ${isMobile ? "mobile" : ""}`}>
-      <Box className={`car-image-box ${isMobile ? "mobile" : ""}`}>
+    <Card className="car-card">
+      <Box className="car-image-box">
         <CardMedia
-          className={`car-image ${isMobile ? "mobile" : ""}`}
+          className="car-image"
           component="img"
           image={getImageByType(car.typeVehicule)}
           alt="Car"
@@ -45,9 +33,9 @@ const CarCard = ({ car, isSelected, onSelect }) => {
         </Typography>
       </Box>
 
-      {!isMobile && <Box className="car-divider" />}
+      <Box className="car-divider" />
 
-      <Box className={`car-info ${isMobile ? "mobile" : ""}`}>
+      <Box className="car-info">
         <Typography className="car-type" variant="h6">
           {car.typeVehicule}
           <Chip
@@ -86,27 +74,18 @@ const CarCard = ({ car, isSelected, onSelect }) => {
         </Box>
       </Box>
 
-      {!isMobile && <Box className="car-divider" />}
+      <Box className="car-divider" />
 
-      <Box className={`car-price-box ${isMobile ? "mobile" : ""}`}>
-        <Typography variant="body2" color="textSecondary">
-          Total one-way price
-        </Typography>
-
+      <Box className="car-price-box">
+        {car && (
+          <Typography variant="body2" color="textSecondary">
+            {car.retour ? "Total round-trip price" : "Total one-way price"}
+          </Typography>
+        )}
         <Box>
           <Typography className="car-price" variant="h5" fontWeight="bold">
             {car ? `$${car.total ?? car.aller}` : "Chargement..."}
           </Typography>
-
-          {car && (
-            <Typography
-              variant="body2"
-              color="text.secondary"
-              sx={{ fontSize: "0.85rem", mt: 0.5 }}
-            >
-              {car.retour ? "(aller / retour)" : "(aller simple)"}
-            </Typography>
-          )}
         </Box>
         <Chip
           icon={<CheckCircle />}
@@ -123,7 +102,7 @@ const CarCard = ({ car, isSelected, onSelect }) => {
           <Button
             className="car-select-button"
             variant="contained"
-            fullWidth={isMobile}
+            fullWidth
             onClick={handleSelect}
             sx={{ mt: 1 }}
           >

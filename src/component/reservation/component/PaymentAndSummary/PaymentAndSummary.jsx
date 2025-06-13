@@ -2,27 +2,15 @@ import React, { useState, useEffect } from "react";
 import PaymentForm from "../Payement/PaymentForm";
 import DeanSummary from "../../../../summary/Summary";
 import "../CardInfo/CardInfo.css";
-import {
-  Box,
-  Card,
-  CardContent,
-  Grid,
-  Collapse,
-  useMediaQuery,
-} from "@mui/material";
-import { useFormik } from "formik";
-import * as Yup from "yup";
+import { Box, Card, CardContent, Grid } from "@mui/material";
+
 import { useSelector } from "react-redux";
 import FeatureBar from "../FeatureBar/FeatureBar";
-import ExtraInfo from "../FeatureBar/ExtraInfo/ExtraInfo";
 import CarCard from "../Tomobiles/Car";
 import Steps from "../../../../Steps/Steps";
 export default function PaymentAndSummary() {
   const selectedCar = useSelector((state) => state.process.step2Data);
-  const [extraInfoCollapsed, setExtraInfoCollapsed] = useState(false);
-  const [isCollapsed, setIsCollapsed] = useState(false);
   const [showExtraInfo, setShowExtraInfo] = useState(false);
-  const isLargeScreen = useMediaQuery("(min-width:1280px)");
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
@@ -53,11 +41,9 @@ export default function PaymentAndSummary() {
           </Card>
         </Grid>
 
-        {isLargeScreen && (
-          <Grid item md={4}>
-            <DeanSummary />
-          </Grid>
-        )}
+        <Grid item xs={12} md={4}>
+          <DeanSummary />
+        </Grid>
       </Grid>
     </Box>
   );

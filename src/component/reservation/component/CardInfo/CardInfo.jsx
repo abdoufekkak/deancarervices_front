@@ -10,7 +10,6 @@ import {
   Button,
   Grid,
   Collapse,
-  useMediaQuery,
 } from "@mui/material";
 import { useFormik } from "formik";
 import * as Yup from "yup";

@@ -33,7 +33,7 @@
 }
 
 .car-image {
-  width: 180px;
+  width: 200px;
   height: auto;
   border-radius: 16px;
   object-fit: cover;
@@ -112,4 +112,59 @@
 .car-price-note {
   margin-top: 4px;
   display: block;
+}
+@media (max-width: 600px) {
+  .car-card {
+    flex-direction: column;
+    padding: 37px;
+    margin: 11px;
+  }
+
+  .car-image-box {
+    max-width: 100%;
+    margin-right: 0;
+  }
+
+  .car-image {
+    max-height: 200px;
+    border-radius: 6px;
+  }
+
+  .car-divider {
+    display: none;
+  }
+
+  .car-info {
+    margin-top: 12px;
+    text-align: left;
+  }
+
+  .car-type {
+    font-size: 1.25rem;
+    margin-bottom: 6px;
+  }
+
+  .car-specs {
+    font-size: 0.9rem;
+    margin-bottom: 10px;
+  }
+
+  .car-chips {
+    justify-content: flex-start;
+  }
+
+  .car-price-box {
+    max-width: 100%;
+    text-align: left;
+    margin-top: 12px;
+  }
+
+  .car-price {
+    font-size: 1.4rem;
+  }
+
+  .car-select-button {
+    width: 100%;
+    margin-top: 16px;
+  }
 }

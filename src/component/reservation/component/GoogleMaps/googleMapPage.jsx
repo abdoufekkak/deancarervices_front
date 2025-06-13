@@ -7,7 +7,7 @@ import {
   DirectionsRenderer,
 } from "@react-google-maps/api";
 import { useLocation } from "react-router-dom";
-import { Box, useMediaQuery } from "@mui/material";
+import { Box } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { setStep1Data } from "../../../../store/processSlice";
 import "./GoogleMaps.css";
@@ -36,7 +36,6 @@ const GoogleMaps = () => {
   const [mapLoading, setMapLoading] = useState(true);
 
   const geocoder = useRef(null);
-  const isLargeScreen = useMediaQuery("(min-width:1280px)");
   // Animate marker
   const animateMarker = (path) => {
     if (!path || path.length === 0) return;
