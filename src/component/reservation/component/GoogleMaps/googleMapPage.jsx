@@ -22,6 +22,8 @@ const center = {
   lng: -74.006,
 };
 
+// ... imports inchangés
+
 const GoogleMaps = () => {
   const location = useLocation();
   const [origin, setOrigin] = useState(null);
@@ -37,7 +39,10 @@ const GoogleMaps = () => {
 
   const geocoder = useRef(null);
   // Animate marker
-  const animateMarker = (path) => {
+  
+
+  // ✅ Animate marker with dynamic speed
+  const animateMarker = (path, delay = 60) => {
     if (!path || path.length === 0) return;
     let i = 0;
     const step = () => {
@@ -47,12 +52,13 @@ const GoogleMaps = () => {
           lng: path[i].lng(),
         });
         i++;
-        animationRef.current = setTimeout(step, 60);
+        animationRef.current = setTimeout(step, delay);
       }
     };
     step();
   };
 
+  // ✅ Directions callback with delay logic based on distance
   const handleDirections = (result, status) => {
     if (status === "OK") {
       setDirectionsResponse(result);
@@ -60,18 +66,24 @@ const GoogleMaps = () => {
       const routeLeg = result.routes[0].legs[0];
       setDistance(routeLeg.distance.text);
       const duration = routeLeg.duration.text;
+
       dispatch(
         setStep1Data({
           ...currentStep1Data,
           distance: routeLeg.distance.text,
-          duration, // ajoutez la durée ici
+          duration,
         })
       );
+
+      // ✅ Extract distance in km and compute delay
+      const distanceKm = parseFloat(routeLeg.distance.text.replace(",", "").split(" ")[0]);
+      const speedFactor = 100 / distanceKm;
+      const delay = Math.max(20, Math.min(150, speedFactor));
+
       if (animationRef.current) clearTimeout(animationRef.current);
-      animateMarker(overviewPath);
+      animateMarker(overviewPath, delay); // ✅ call with delay
     } else {
       alert("Itinerary not found. Check your points.");
-      console.error("Directions request failed due to", status);
     }
     setShouldRequestDirection(false);
   };
@@ -102,8 +114,6 @@ const GoogleMaps = () => {
 
   return (
     <Box sx={{ backgroundColor: "#f5f7fa" }}>
-      {/* Left: Map + Distance + TransferCard */}
-
       <Box className="map-section">
         <Box className="map-left">
           <Box className="map-card" sx={{ backgroundColor: "#f5f7fa" }}>
@@ -151,15 +161,10 @@ const GoogleMaps = () => {
           </Box>
         </Box>
       </Box>
-      {/* {distance && (
-        <div
-          style={{ marginTop: "10px", fontSize: "18px", fontWeight: "bold" }}
-        >
-          Distance: {distance}
-        </div>
-      )} */}
     </Box>
   );
 };
 
 export default GoogleMaps;
+
+

@@ -5,7 +5,6 @@ import "../css/style.css";
 import "../css/font-awesome.min.css";
 import slider_bg from "../../../assets/slider-bg.jpg";
 import BookingForm from "../../reservation/component/Form/BookingForm.jsx";
-import ByHourCard from "../../reservation/component/Form/ByHourCard.jsx";
 import usePrice from "../../reservation/component/Tomobiles/hooks/calculatePrice.jsx";
 import { useDispatch, useSelector } from "react-redux";
 import { setStep4Data } from "../../../store/processSlice.js";

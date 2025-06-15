@@ -60,8 +60,10 @@ function DeanSummary() {
     pickupDate,
     pickupTime,
     passengers,
-    returnDate: storeReturnDate,
-    returnTime: storeReturnTime,
+    returnDate: 
+    storeReturnDate,
+    returnTime: 
+    storeReturnTime,
   } = step1Data || {};
   const isByHour = !!step1Data?.byHour;
 

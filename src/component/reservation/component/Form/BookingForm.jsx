@@ -77,7 +77,7 @@ function BookingForm() {
               type: 0,
             }}
             validationSchema={validationSchema}
-            onSubmit={(values) => {
+            onSubmit={async (values) => {
               const formatDate = (date) => {
                 if (!date) return null;
                 const d = new Date(date);
@@ -109,19 +109,31 @@ function BookingForm() {
                   : "",
                 byHour: false,
               };
+              console.log(values.from, values.to);
+              const request = {
+                origin: values.from,
+                destination: values.to,
+                travelMode: window.google.maps.TravelMode.DRIVING,
+              };
+              const directionsService = new window.google.maps.DirectionsService();
 
-              dispatch(setStep1Data(serializedValues));
-
-              navigate("/map", {
-                state: {
-                  from: values.from,
-                  to: values.to,
-                  pickupDate: values.pickupDate,
-                  pickupTime: values.pickupTime,
-                  returnDate: values.returnDate,
-                  returnTime: values.returnTime,
-                },
-              });
+              directionsService.route(request, (result, status) => {
+                if (status === "OK") {
+                  dispatch(setStep1Data(serializedValues));
+                  navigate("/map", {
+                    state: {
+                      from: values.from,
+                      to: values.to,
+                      pickupDate: values.pickupDate,
+                      pickupTime: values.pickupTime,
+                      returnDate: values.returnDate,
+                      returnTime: values.returnTime,
+                    },
+                  });
+                } else {
+                }
+              }
+              )
             }}
           >
             {({ values, errors, touched, setFieldValue, handleSubmit }) => {

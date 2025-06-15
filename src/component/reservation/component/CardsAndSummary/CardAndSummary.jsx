@@ -11,8 +11,6 @@ import CarCard from "../Tomobiles/Car";
 import Steps from "../../../../Steps/Steps";
 export default function CardAndSummary() {
   const selectedCar = useSelector((state) => state.process.step2Data);
-  const [extraInfoCollapsed, setExtraInfoCollapsed] = useState(false);
-  const [isCollapsed, setIsCollapsed] = useState(false);
   const [showExtraInfo, setShowExtraInfo] = useState(false);
   useEffect(() => {
     window.scrollTo(0, 0);

@@ -1,13 +1,28 @@
-import { LoadScript } from "@react-google-maps/api";
+import { useJsApiLoader } from "@react-google-maps/api";
+import { CircularProgress, Box } from "@mui/material";
 
-const libraries = ["places"]; // nécessaire pour Autocomplete
+const libraries = ["places"];
 
 const GoogleMapProvider = ({ children }) => {
-  return (
-    <LoadScript googleMapsApiKey={import.meta.env.VITE_GOOGLE_MAPS_API_KEY} libraries={libraries}>
-      {children}
-    </LoadScript>
-  );
+  const { isLoaded } = useJsApiLoader({
+    googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY,
+    libraries,
+  });
+
+  if (!isLoaded) {
+    return (
+      <Box
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+        height="100vh"
+      >
+        <CircularProgress />
+      </Box>
+    );
+  }
+
+  return <>{children}</>;
 };
 
 export default GoogleMapProvider;

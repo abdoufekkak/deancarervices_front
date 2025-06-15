@@ -84,8 +84,6 @@ const PaymentForm = () => {
       const response = isByHour
         ? await addTour(commonPayload)
         : await addReservation(fullPayload);
-
-      console.log("Envoi réussi :", response);
       setIsCollapsed(true);
       setTimeout(() => setShowConfirmation(true), 400);
     } catch (error) {
