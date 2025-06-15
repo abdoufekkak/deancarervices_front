@@ -2,7 +2,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-  step1Data: { id: 2 },
+  step1Data: {},
   step2Data: {},
   step3Data: {},
   step4Data: {},

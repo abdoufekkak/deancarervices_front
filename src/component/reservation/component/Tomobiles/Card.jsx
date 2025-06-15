@@ -36,7 +36,6 @@ useEffect(() => {
       setCars(carsWithPrice);
     })
     .catch((e) => {
-      console.error("Erreur :", e);
     });
 }, [step1, step4]);
 

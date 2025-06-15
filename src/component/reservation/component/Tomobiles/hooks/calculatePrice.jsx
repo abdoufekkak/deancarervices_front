@@ -13,7 +13,6 @@ const usePrice = () => {
         hourlyRates: hourlyRateRes.data,
       };
     } catch (error) {
-      console.error("Erreur lors du chargement des données Step 4 :", error);
     }
   };
 

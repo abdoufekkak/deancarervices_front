@@ -18,6 +18,7 @@ import Reviews from "./component/Home/Reviews/Reviews";
 import CardAndSummary from "./component/reservation/component/CardsAndSummary/CardAndSummary.jsx";
 import ExtraInfoPage from "./component/reservation/component/ExtraAndSummary/ExtraAndSummary.jsx";
 import PaymentAndSummary from "./component/reservation/component/PaymentAndSummary/PaymentAndSummary.jsx";
+import StepGuard from "./Guard/StepGuard.jsx";
 function App() {
   const step1Data = useSelector((state) => state.process.step1Data);
   return (
@@ -53,7 +54,9 @@ function App() {
             path="/map"
             element={
               <>
+               <StepGuard requiredSteps={["step1Data"]}>
                 <MapsAndCard />
+                </StepGuard>
                 <Footer />
               </>
             }
@@ -62,8 +65,12 @@ function App() {
             path="/Info"
             element={
               <>
-                <CardAndSummary />
-                <Footer />
+              <StepGuard requiredSteps={["step1Data","step2Data"]}>
+                             <CardAndSummary />
+                                                           <Footer />
+
+                                </StepGuard>
+
               </>
             }
           />
@@ -80,8 +87,11 @@ function App() {
             path="/Extra"
             element={
               <>
+                            <StepGuard requiredSteps={["step1Data","step2Data","step3Data"]}>
+
                 <ExtraInfoPage />
                 <Footer />
+                </StepGuard>
               </>
             }
           />
@@ -89,8 +99,11 @@ function App() {
             path="/pay"
             element={
               <>
+               <StepGuard requiredSteps={["step1Data","step2Data","step3Data","step4Data"]}>
+
                 <PaymentAndSummary />
                 <Footer />
+                </StepGuard>
               </>
             }
           />

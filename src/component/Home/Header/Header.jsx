@@ -19,11 +19,9 @@ function Header() {
     setLoading(true);
     fetchAllprice()
       .then((data) => {
-        console.log("✅ Données reçues:", data);
         dispatch(setStep4Data({ ...data })); // ✅ Voilà la bonne utilisation
       })
       .catch((e) => {
-        console.log(e);
       })
       .finally(() => {
         setLoading(false);

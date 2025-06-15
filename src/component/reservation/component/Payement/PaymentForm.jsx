@@ -24,7 +24,7 @@ import { useFormik } from "formik";
 import { useDispatch, useSelector } from "react-redux";
 import "./PaymentForm.css";
 import * as Yup from "yup";
-import { InfoOutlined, CheckCircleOutline } from "@mui/icons-material";
+import { InfoOutlined, CheckCircleOutline, ContrastOutlined } from "@mui/icons-material";
 
 const PaymentForm = () => {
   const dispatch = useDispatch();
@@ -38,12 +38,6 @@ const PaymentForm = () => {
   const step3Data = useSelector((state) => state.process.step3Data);
 
   const handlePaymentSubmit = async (values) => {
-    const fullData = {
-      ...step1Data,
-      ...step2Data,
-      ...step3Data,
-      ...values,
-    };
 
     dispatch(setStep3Data({ ...step3Data, ...values })); // met à jour redux avec les infos paiement
 
@@ -85,9 +79,9 @@ const PaymentForm = () => {
         ? await addTour(commonPayload)
         : await addReservation(fullPayload);
       setIsCollapsed(true);
-      setTimeout(() => setShowConfirmation(true), 400);
+      setShowConfirmation(true)
     } catch (error) {
-      console.error("Erreur lors de l'envoi :", error);
+      connsole.log(error)
     }
   };
   const validationSchema = Yup.object().shape({

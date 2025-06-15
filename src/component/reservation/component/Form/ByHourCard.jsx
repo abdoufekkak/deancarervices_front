@@ -55,7 +55,6 @@ function ByHourCard() {
         }}
         validationSchema={validationSchema}
         onSubmit={(values) => {
-          console.log("Submitting ByHourCard values:", values);
           const formatDate = (date) => {
             if (!date) return null;
             const d = new Date(date);
@@ -100,7 +99,6 @@ function ByHourCard() {
           handleSubmit,
           handleChange,
         }) => {
-          console.log("Formik render", { values, errors, touched }); // <- Ajoute ça
 
           return (
             <form onSubmit={handleSubmit}>

@@ -12,6 +12,7 @@ const useReservation = () => {
       const response = await axios.post(`${http.apiBaseUrl}reservations`, data); // Remplace par l'URL de ton API
       return response.data; // Stocke les données des voitures dans le state
     } catch (err) {
+      console.log(err)
       setError("Erreur lors de la récupération des voitures");
     } finally {
       setIsLoading(false);

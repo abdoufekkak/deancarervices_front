@@ -35,7 +35,6 @@ import { useDispatch } from "react-redux";
 import GooglePlacesAutocomplete from "./GooglePlacesAutocomplete";
 import "./BookingForm.css";
 import ByHourCard from "./ByHourCard";
-
 const validationSchema = Yup.object().shape({
   from: Yup.string().required("From is required"),
   to: Yup.string()
@@ -43,11 +42,43 @@ const validationSchema = Yup.object().shape({
     .notOneOf([Yup.ref("from")], "Destination must be different from origin"),
   pickupDate: Yup.date().required("Pickup date is required"),
   pickupTime: Yup.date().required("Pickup time is required"),
-  returnDate: Yup.date().nullable(),
-  returnTime: Yup.date().nullable(),
+ returnDate: Yup.date()
+  .nullable()
+  .when(["showReturn", "pickupDate", "pickupTime", "returnTime"], {
+    is: (showReturn, pickupDate, pickupTime, returnTime) =>
+      showReturn && pickupDate && pickupTime && returnTime,
+    then: (schema) =>
+      schema
+        .required("Return date is required")
+        .test(
+          "is-after-pickup-datetime",
+          "Return date and time must be after pickup date and time",
+          function (returnDate) {
+            const { pickupDate, pickupTime, returnTime } = this.parent;
+
+            const pickupDateTime = new Date(pickupDate);
+            pickupDateTime.setHours(new Date(pickupTime).getHours());
+            pickupDateTime.setMinutes(new Date(pickupTime).getMinutes());
+
+            const returnDateTime = new Date(returnDate);
+            returnDateTime.setHours(new Date(returnTime).getHours());
+            returnDateTime.setMinutes(new Date(returnTime).getMinutes());
+
+            return returnDateTime > pickupDateTime;
+          }
+        ),
+  }),
+
+  returnTime: Yup.date()
+    .nullable()
+    .when("showReturn", {
+      is: true,
+      then: (schema) => schema.required("Return time is required"),
+    }),
   passengers: Yup.number()
     .required("Passengers is required")
     .min(1, "At least 1 passenger"),
+  showReturn: Yup.boolean(), // <- important pour accéder à cette valeur dans le schéma
 });
 
 function BookingForm() {
@@ -55,7 +86,6 @@ function BookingForm() {
   const [showReturn, setShowReturn] = useState(false);
   const navigate = useNavigate();
   const dispatch = useDispatch();
-
   return (
     <LocalizationProvider dateAdapter={AdapterDateFns}>
       <Box className="booking-container">
@@ -75,6 +105,7 @@ function BookingForm() {
               returnTime: null,
               passengers: 2,
               type: 0,
+               showReturn: false
             }}
             validationSchema={validationSchema}
             onSubmit={async (values) => {
@@ -109,7 +140,6 @@ function BookingForm() {
                   : "",
                 byHour: false,
               };
-              console.log(values.from, values.to);
               const request = {
                 origin: values.from,
                 destination: values.to,
@@ -138,6 +168,9 @@ function BookingForm() {
           >
             {({ values, errors, touched, setFieldValue, handleSubmit }) => {
               useEffect(() => {
+              
+
+                setFieldValue("showReturn",showReturn)
                 if (!showReturn) {
                   setFieldValue("returnDate", null);
                   setFieldValue("returnTime", null);
@@ -225,56 +258,79 @@ function BookingForm() {
                     {showReturn ? "REMOVE RETURN" : "ADD RETURN"}
                   </Button>
 
-                  {showReturn && (
-                    <Box className="booking-date-time">
-                      <DatePicker
-                        label="Return date"
-                        value={values.returnDate}
-                        onChange={(val) => setFieldValue("returnDate", val)}
-                        renderInput={(params) => (
-                          <TextField
-                            {...params}
-                            fullWidth
-                            error={
-                              touched.returnDate && Boolean(errors.returnDate)
-                            }
-                            helperText={touched.returnDate && errors.returnDate}
-                            InputProps={{
-                              ...params.InputProps,
-                              startAdornment: (
-                                <InputAdornment position="start">
-                                  <CalendarMonth />
-                                </InputAdornment>
-                              ),
-                            }}
-                          />
-                        )}
-                      />
-                      <TimePicker
-                        label="Return time"
-                        value={values.returnTime}
-                        onChange={(val) => setFieldValue("returnTime", val)}
-                        renderInput={(params) => (
-                          <TextField
-                            {...params}
-                            fullWidth
-                            error={
-                              touched.returnTime && Boolean(errors.returnTime)
-                            }
-                            helperText={touched.returnTime && errors.returnTime}
-                            InputProps={{
-                              ...params.InputProps,
-                              startAdornment: (
-                                <InputAdornment position="start">
-                                  <AccessTime />
-                                </InputAdornment>
-                              ),
-                            }}
-                          />
-                        )}
-                      />
-                    </Box>
-                  )}
+       {showReturn && (
+  <Box className="booking-date-time">
+    {/* Return Date Error */}
+   <Box display={"flex"} flexDirection={"column"}>
+      <DatePicker
+      label="Return date"
+      value={values.returnDate}
+      onChange={(val) => setFieldValue("returnDate", val)}
+      renderInput={() => (
+        <TextField
+          {...params}
+          fullWidthparams
+          error={Boolean(errors.returnDate)}
+          helperText={null} // helperText enlevé pour ne pas doubler
+          InputProps={{
+            ...params.InputProps,
+            startAdornment: (
+              <InputAdornment position="start">
+                <CalendarMonth />
+              </InputAdornment>
+            ),
+          }}
+        />
+      )}
+    />
+     {errors.returnDate && (
+      <Typography
+        variant="caption"
+        color="error"
+        sx={{ ml: "2px", mb: "2px", mt: "10px", fontSize: "0.75rem" }}
+      >
+        {errors.returnDate}
+      </Typography>
+    )}
+   </Box>
+  
+
+   <Box display={"flex"} flexDirection={"column"}>
+    <TimePicker
+      label="Return time"
+      value={values.returnTime}
+      onChange={(val) => setFieldValue("returnTime", val)}
+      renderInput={(params) => (
+        <TextField
+          {...params}
+          fullWidth
+          error={Boolean(errors.returnTime)}
+          helperText={null}
+          InputProps={{
+            ...params.InputProps,
+            startAdornment: (
+              <InputAdornment position="start">
+                <AccessTime />
+              </InputAdornment>
+            ),
+          }}
+        />
+      )}
+    />
+     {errors.returnTime && (
+      <Typography
+        variant="caption"
+        color="error"
+        sx={{ ml: "2px", mb: "2px", mt: "10px", fontSize: "0.75rem" }}
+      >
+        {errors.returnTime}
+      </Typography>
+    )}
+  </Box>
+  </Box>  
+)}
+
+
 
                   <Paper elevation={0} className="booking-passenger-box">
                     <Box>
