@@ -25,14 +25,15 @@ import { useDispatch, useSelector } from "react-redux";
 import "./PaymentForm.css";
 import * as Yup from "yup";
 import { InfoOutlined, CheckCircleOutline, ContrastOutlined } from "@mui/icons-material";
+import { useNavigate } from "react-router-dom";
 
 const PaymentForm = () => {
   const dispatch = useDispatch();
-  const { addReservation } = useReservation();
-  const { addTour } = useTour();
+  const { addReservation,error,isLoading } = useReservation();
+  const { addTour,errorToor,isLoadingToor } = useTour();
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [showConfirmation, setShowConfirmation] = useState(false);
-
+const navigate=useNavigate();
   const step1Data = useSelector((state) => state.process.step1Data);
   const step2Data = useSelector((state) => state.process.step2Data);
   const step3Data = useSelector((state) => state.process.step3Data);
@@ -48,8 +49,8 @@ const PaymentForm = () => {
       phone: step3Data.phone,
       fullName: `${step3Data.firstName} ${step3Data.lastName}`,
       voitureId: step2Data?.id,
-      pickupDate: step1Data?.pickupDate,
-      pickupTime: step1Data?.pickupTime,
+      pickupDate: step1Data.pickupDate?step1Data.pickupDate:null,
+      pickupTime: step1Data?.pickupTime?step1Data?.pickupTime:null,
       passengers: step1Data?.passengers,
       total: step2Data?.total,
       etat: "En attente",
@@ -65,46 +66,57 @@ const PaymentForm = () => {
       expiryDate: values.expiryDate,
       cvc: values.cvc,
     };
-
-    const fullPayload = {
-      ...commonPayload,
-      returnDate: step1Data?.returnDate,
-      returnTime: step1Data?.returnTime,
-      type: step1Data?.type,
-      arrivee: step1Data?.to,
-    };
+   const fullPayload = {
+  ...commonPayload,
+  ...(step1Data?.returnDate && { returnDate: step1Data.returnDate }),
+  ...(step1Data?.returnTime && { returnTime: step1Data.returnTime }),
+  type: step1Data?.type,
+  arrivee: step1Data?.to,
+};
 
     try {
       const response = isByHour
         ? await addTour(commonPayload)
         : await addReservation(fullPayload);
       setIsCollapsed(true);
-      setShowConfirmation(true)
+      console.log(error,"ok")
+      if(!error||errorToor){
+ setTimeout(() => {
+       setShowConfirmation(true)
+    }, 400);  
+     setTimeout(() => {
+       navigate("/")
+    }, 1000);
+      }else{
+    setTimeout(() => {
+       setShowConfirmation(false)
+    }, 400);
+      }
     } catch (error) {
       connsole.log(error)
     }
   };
-  const validationSchema = Yup.object().shape({
-    cardholderName: Yup.string()
-      .required("Cardholder name is required")
-      .min(2, "Too short")
-      .max(50, "Too long"),
+const validationSchema = Yup.object().shape({
+  cardholderName: Yup.string()
+    .required("Le nom du titulaire est requis")
+    .min(2, "Trop court")
+    .max(50, "Trop long"),
 
-    cardNumber: Yup.string()
-      .required("Card number is required")
-      .matches(/^\d{13,19}$/, "Card number is not valid"),
+  cardNumber: Yup.string()
+    .required("Le numéro de carte est requis")
+    .matches(/^\d{13,19}$/, "Le numéro de carte est invalide"),
 
-    expiryDate: Yup.string()
-      .required("Expiry date is required")
-      .matches(
-        /^(0[1-9]|1[0-2])\/?([0-9]{2})$/,
-        "Expiry date must be in MM/YY format"
-      ),
+  expiryDate: Yup.string()
+    .required("La date d'expiration est requise")
+    .matches(
+      /^(0[1-9]|1[0-2])\/?([0-9]{2})$/,
+      "Le format de la date doit être MM/YY"
+    ),
 
-    cvc: Yup.string()
-      .required("CVC is required")
-      .matches(/^[0-9]{3}$/, "CVC must be 3 digits"),
-  });
+  cvc: Yup.string()
+    .required("Le CVC est requis")
+    .matches(/^[0-9]{3,4}$/, "Le CVC doit contenir 3 ou 4 chiffres"),
+});
 
   const formik = useFormik({
     initialValues: {
@@ -370,20 +382,22 @@ const PaymentForm = () => {
           </Box>
 
           <Box sx={{ mt: 3, display: "flex", justifyContent: "flex-end" }}>
-            <Button
-              type="submit"
-              variant="contained"
-              sx={{
-                backgroundColor: "#0a97b0",
-                "&:hover": {
-                  backgroundColor: "#087c91",
-                },
-                padding: "10px 24px",
-                minWidth: "120px",
-              }}
-            >
-              Submit
-            </Button>
+           <Button
+  type="submit"
+  variant="contained"
+  disabled={isLoading || isLoadingToor}
+  sx={{
+    backgroundColor: "#0a97b0",
+    "&:hover": {
+      backgroundColor: "#087c91",
+    },
+    padding: "10px 24px",
+    minWidth: "120px",
+  }}
+>
+  {isLoading || isLoadingToor ? "Loading..." : "Submit"}
+</Button>
+
           </Box>
         </Box>
       </form>
