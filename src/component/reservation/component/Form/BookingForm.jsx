@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
-
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import {
   Box,
   TextField,
@@ -36,13 +37,22 @@ import { useDispatch } from "react-redux";
 import GooglePlacesAutocomplete from "./GooglePlacesAutocomplete";
 import "./BookingForm.css";
 import ByHourCard from "./ByHourCard";
-
 const validationSchema = Yup.object().shape({
   from: Yup.string().required("From is required"),
   to: Yup.string().required("To is required"),
   pickupDate: Yup.date().required("Pickup date is required"),
   pickupTime: Yup.date().required("Pickup time is required"),
-  returnDate: Yup.date().nullable(),
+  returnDate: Yup.date()
+    .nullable()
+    .test(
+      "is-after-pickup",
+      "Return date must be after pickup date",
+      function (value) {
+        const { pickupDate } = this.parent;
+        if (!value) return true;
+        return new Date(value) > new Date(pickupDate);
+      }
+    ),
   returnTime: Yup.date().nullable(),
   passengers: Yup.number()
     .required("Passengers is required")
@@ -99,6 +109,7 @@ function BookingForm() {
             byHour: false,
           };
 
+<<<<<<< Updated upstream
           dispatch(setStep1Data(serializedValues));
 
           navigate("/map", {
@@ -144,6 +155,105 @@ function BookingForm() {
                       onChange={(val) => setFieldValue("from", val)}
                       error={touched.from && Boolean(errors.from)}
                       helperText={touched.from && errors.from}
+=======
+              const serializedValues = {
+                ...values,
+                type: values.returnDate ? 1 : 0,
+                pickupDate: formatDate(values.pickupDate),
+                pickupTime: formatTime(values.pickupTime),
+                returnDate: values.returnDate
+                  ? formatDate(values.returnDate)
+                  : "",
+                returnTime: values.returnTime
+                  ? formatTime(values.returnTime)
+                  : "",
+                byHour: false,
+              };
+              const request = {
+                origin: values.from,
+                destination: values.to,
+                travelMode: window.google.maps.TravelMode.DRIVING,
+              };
+              const directionsService =
+                new window.google.maps.DirectionsService();
+
+              directionsService.route(request, (result, status) => {
+                if (status === "OK") {
+                  dispatch(setStep1Data(serializedValues));
+                  navigate("/map", {
+                    state: {
+                      from: values.from,
+                      to: values.to,
+                      pickupDate: values.pickupDate,
+                      pickupTime: values.pickupTime,
+                      returnDate: values.returnDate,
+                      returnTime: values.returnTime,
+                    },
+                  });
+                } else {
+                  toast.error(
+                    `No route could be found between "${values.from}" and "${values.to}".`,
+                    { position: "top-center", autoClose: 5000 }
+                  );
+                }
+              });
+            }}
+          >
+            {({ values, errors, touched, setFieldValue, handleSubmit }) => {
+              useEffect(() => {
+                if (!showReturn) {
+                  setFieldValue("returnDate", null);
+                  setFieldValue("returnTime", null);
+                }
+              }, [showReturn, setFieldValue]);
+
+              return (
+                <form onSubmit={handleSubmit}>
+                  <GooglePlacesAutocomplete
+                    label="From"
+                    value={values.from}
+                    onChange={(val) => setFieldValue("from", val)}
+                    error={touched.from && Boolean(errors.from)}
+                    helperText={touched.from && errors.from}
+                  />
+                  <GooglePlacesAutocomplete
+                    label="To"
+                    value={values.to}
+                    onChange={(val) => {
+                      if (val === values.from) {
+                        setFieldValue("to", "");
+                      } else {
+                        setFieldValue("to", val);
+                      }
+                    }}
+                    error={touched.to && Boolean(errors.to)}
+                    helperText={touched.to && errors.to}
+                  />
+
+                  <Box className="booking-date-time">
+                    <DatePicker
+                      label="Pickup date"
+                      value={values.pickupDate}
+                      onChange={(val) => setFieldValue("pickupDate", val)}
+                      renderInput={(params) => (
+                        <TextField
+                          {...params}
+                          fullWidth
+                          error={
+                            touched.pickupDate && Boolean(errors.pickupDate)
+                          }
+                          helperText={touched.pickupDate && errors.pickupDate}
+                          InputProps={{
+                            ...params.InputProps,
+                            startAdornment: (
+                              <InputAdornment position="start">
+                                <CalendarMonth />
+                              </InputAdornment>
+                            ),
+                          }}
+                        />
+                      )}
+>>>>>>> Stashed changes
                     />
                     <GooglePlacesAutocomplete
                       label="To"

@@ -22,7 +22,15 @@ export default function CardAndSummary() {
   const [extraInfoCollapsed, setExtraInfoCollapsed] = useState(false);
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [showExtraInfo, setShowExtraInfo] = useState(false);
+<<<<<<< Updated upstream
   const isLargeScreen = useMediaQuery("(min-width:1280px)");
+=======
+  const [selectedCarId, setSelectedCarId] = useState(null);
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+>>>>>>> Stashed changes
 
   return (
     <Box sx={{ backgroundColor: "#f5f7fa" }}>
@@ -38,8 +46,9 @@ export default function CardAndSummary() {
             <Box>
               <CarCard
                 car={selectedCar}
+                price={selectedCar.price}
                 isSelected={true}
-                onSelect={() => {}}
+                onSelect={() => setSelectedCarId(selectedCar.id)}
               />
             </Box>
           )}

@@ -22,6 +22,13 @@ import Cars from "./component/Home/Cars/Cars";
 import Reviews from "./component/Home/Reviews/Reviews";
 import CardAndSummary from "./component/reservation/component/CardsAndSummary/CardAndSummary.jsx";
 import ExtraInfoPage from "./component/reservation/component/ExtraAndSummary/ExtraAndSummary.jsx";
+<<<<<<< Updated upstream
+=======
+import PaymentAndSummary from "./component/reservation/component/PaymentAndSummary/PaymentAndSummary.jsx";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
+>>>>>>> Stashed changes
 function App() {
   const step1Data = useSelector((state) => state.process.step1Data);
   return (
@@ -35,6 +42,8 @@ function App() {
             element={
               <>
                 <Header />
+                <ToastContainer position="top-center" autoClose={5000} />
+
                 <Services />
                 <About />
                 <Info />

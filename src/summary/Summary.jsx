@@ -93,7 +93,9 @@ function DeanSummary() {
       );
     }
   }, [returnTime]);
-
+  useEffect(() => {
+    console.log("step1Data a changé :", step1Data);
+  }, [step1Data]);
   return (
     <Card
       sx={{

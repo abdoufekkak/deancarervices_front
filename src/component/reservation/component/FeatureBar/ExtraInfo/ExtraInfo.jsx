@@ -239,7 +239,7 @@ function ExtraInfo() {
                 minWidth: "120px", // optionnel pour un look plus propre
               }}
             >
-              Submit
+              NEXT
             </Button>
           </Box>
         </Collapse>
