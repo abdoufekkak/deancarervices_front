@@ -3,7 +3,7 @@ import "../css/bootstrap.css";
 import "../css/responsive.css";
 import "../css/style.css";
 import "../css/font-awesome.min.css";
-import slider_bg from "../../../assets/slider-bg.jpg";
+import imgg from "../../../assets/imgg.jpg";
 import BookingForm from "../../reservation/component/Form/BookingForm.jsx";
 import usePrice from "../../reservation/component/Tomobiles/hooks/calculatePrice.jsx";
 import { useDispatch, useSelector } from "react-redux";
@@ -21,8 +21,7 @@ function Header() {
       .then((data) => {
         dispatch(setStep4Data({ ...data })); // ✅ Voilà la bonne utilisation
       })
-      .catch((e) => {
-      })
+      .catch((e) => {})
       .finally(() => {
         setLoading(false);
       });
@@ -43,7 +42,7 @@ function Header() {
   return (
     <section className="slider_section">
       <div className="slider_bg_box">
-        <img src={slider_bg} alt="Background" />
+        <img src={imgg} alt="Background" />
       </div>
 
       <div className="header-content">

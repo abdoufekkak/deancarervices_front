@@ -19,6 +19,8 @@ import CardAndSummary from "./component/reservation/component/CardsAndSummary/Ca
 import ExtraInfoPage from "./component/reservation/component/ExtraAndSummary/ExtraAndSummary.jsx";
 import PaymentAndSummary from "./component/reservation/component/PaymentAndSummary/PaymentAndSummary.jsx";
 import StepGuard from "./Guard/StepGuard.jsx";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 function App() {
   const step1Data = useSelector((state) => state.process.step1Data);
   return (
@@ -32,6 +34,7 @@ function App() {
             element={
               <>
                 <Header />
+                <ToastContainer position="top-center" autoClose={5000} />
                 <Services />
                 <About />
                 <Info />
@@ -54,8 +57,8 @@ function App() {
             path="/map"
             element={
               <>
-               <StepGuard requiredSteps={["step1Data"]}>
-                <MapsAndCard />
+                <StepGuard requiredSteps={["step1Data"]}>
+                  <MapsAndCard />
                 </StepGuard>
                 <Footer />
               </>
@@ -65,12 +68,10 @@ function App() {
             path="/Info"
             element={
               <>
-              <StepGuard requiredSteps={["step1Data","step2Data"]}>
-                             <CardAndSummary />
-                                                           <Footer />
-
-                                </StepGuard>
-
+                <StepGuard requiredSteps={["step1Data", "step2Data"]}>
+                  <CardAndSummary />
+                  <Footer />
+                </StepGuard>
               </>
             }
           />
@@ -87,10 +88,11 @@ function App() {
             path="/Extra"
             element={
               <>
-                            <StepGuard requiredSteps={["step1Data","step2Data","step3Data"]}>
-
-                <ExtraInfoPage />
-                <Footer />
+                <StepGuard
+                  requiredSteps={["step1Data", "step2Data", "step3Data"]}
+                >
+                  <ExtraInfoPage />
+                  <Footer />
                 </StepGuard>
               </>
             }
@@ -99,10 +101,16 @@ function App() {
             path="/pay"
             element={
               <>
-               <StepGuard requiredSteps={["step1Data","step2Data","step3Data","step4Data"]}>
-
-                <PaymentAndSummary />
-                <Footer />
+                <StepGuard
+                  requiredSteps={[
+                    "step1Data",
+                    "step2Data",
+                    "step3Data",
+                    "step4Data",
+                  ]}
+                >
+                  <PaymentAndSummary />
+                  <Footer />
                 </StepGuard>
               </>
             }

@@ -11,27 +11,12 @@ function Footer() {
   const sections = [
     {
       title: "America - 24/7",
-      items: [
-        "🇺🇸 US EAST: +1 929 416 3724",
-        "🇺🇸 US WEST: +1 562 269 3528",
-        "🇨🇦 CANADA: +1 365 654 6440",
-      ],
-    },
-    {
-      title: "Oceania - 24/7",
-      items: ["🇦🇺 AUSTRALIA: +61 1300 297 730"],
-    },
-    {
-      title: "Europe - 24/7",
-      items: ["🇬🇧 UK: +44 20 4586 9665", "🇮🇹 ITALY: +39 06 9450 5426"],
-    },
-    {
-      title: "General Info",
-      items: ["info@Dean.com"],
+      items: ["🇺🇸 US EAST: +1 971 337 9979", "🇺🇸 US WEST: +1 201 658 9990"],
     },
   ];
 
   const airports = [
+    "Miami Airoport",
     "London Heathrow Airport",
     "Rome Airport",
     "Barcelona Airport",
@@ -41,14 +26,13 @@ function Footer() {
     "Lisbon Airport",
     "Los Angeles Airport",
     "Milan Malpensa Airport",
-    "Amsterdam Airport",
   ];
 
   const services = [
     "Airport Transfers",
     "City rides",
     "Hourly Service",
-    "Business Solutions",
+
     "Help Centre",
     "Travel Blog",
     "oneMILE",

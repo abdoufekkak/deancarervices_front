@@ -39,7 +39,6 @@ const GoogleMaps = () => {
 
   const geocoder = useRef(null);
   // Animate marker
-  
 
   // ✅ Animate marker with dynamic speed
   const animateMarker = (path, delay = 60) => {
@@ -75,9 +74,10 @@ const GoogleMaps = () => {
         })
       );
 
-      // ✅ Extract distance in km and compute delay
-      const distanceKm = parseFloat(routeLeg.distance.text.replace(",", "").split(" ")[0]);
-      const speedFactor = 100 / distanceKm;
+      const distanceMi = parseFloat(
+        routeLeg.distance.text.replace(",", "").split(" ")[0]
+      );
+      const speedFactor = 100 / distanceMi;
       const delay = Math.max(20, Math.min(150, speedFactor));
 
       if (animationRef.current) clearTimeout(animationRef.current);
@@ -166,5 +166,3 @@ const GoogleMaps = () => {
 };
 
 export default GoogleMaps;
-
-

@@ -35,6 +35,8 @@ import { useDispatch } from "react-redux";
 import GooglePlacesAutocomplete from "./GooglePlacesAutocomplete";
 import "./BookingForm.css";
 import ByHourCard from "./ByHourCard";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 const validationSchema = Yup.object().shape({
   from: Yup.string().required("From is required"),
   to: Yup.string()
@@ -42,32 +44,37 @@ const validationSchema = Yup.object().shape({
     .notOneOf([Yup.ref("from")], "Destination must be different from origin"),
   pickupDate: Yup.date().required("Pickup date is required"),
   pickupTime: Yup.date().required("Pickup time is required"),
- returnDate: Yup.date()
-  .nullable()
-  .when(["showReturn", "pickupDate", "pickupTime", "returnTime"], {
-    is: (showReturn, pickupDate, pickupTime, returnTime) =>
-      showReturn && pickupDate && pickupTime && returnTime,
-    then: (schema) =>
-      schema
-        .required("Return date is required")
-        .test(
-          "is-after-pickup-datetime",
-          "Return date and time must be after pickup date and time",
-          function (returnDate) {
-            const { pickupDate, pickupTime, returnTime } = this.parent;
+  returnDate: Yup.date()
+    .nullable()
+    .when("showReturn", {
+      is: true,
+      then: (schema) =>
+        schema
+          .required("Return date is required")
+          .test(
+            "is-after-pickup-datetime",
+            "Return date must be after pickup date ",
+            function (returnDate) {
+              const { pickupDate, pickupTime, returnTime } = this.parent;
 
-            const pickupDateTime = new Date(pickupDate);
-            pickupDateTime.setHours(new Date(pickupTime).getHours());
-            pickupDateTime.setMinutes(new Date(pickupTime).getMinutes());
+              if (!pickupDate || !pickupTime || !returnDate) {
+                return true;
+              }
 
-            const returnDateTime = new Date(returnDate);
-            returnDateTime.setHours(new Date(returnTime).getHours());
-            returnDateTime.setMinutes(new Date(returnTime).getMinutes());
+              const pickupDateTime = new Date(pickupDate);
+              pickupDateTime.setHours(new Date(pickupTime).getHours());
+              pickupDateTime.setMinutes(new Date(pickupTime).getMinutes());
 
-            return returnDateTime > pickupDateTime;
-          }
-        ),
-  }),
+              const returnDateTime = new Date(returnDate);
+              if (returnTime) {
+                returnDateTime.setHours(new Date(returnTime).getHours());
+                returnDateTime.setMinutes(new Date(returnTime).getMinutes());
+              }
+
+              return returnDateTime > pickupDateTime;
+            }
+          ),
+    }),
 
   returnTime: Yup.date()
     .nullable()
@@ -105,7 +112,7 @@ function BookingForm() {
               returnTime: null,
               passengers: 2,
               type: 0,
-               showReturn: false
+              showReturn: false,
             }}
             validationSchema={validationSchema}
             onSubmit={async (values) => {
@@ -145,7 +152,8 @@ function BookingForm() {
                 destination: values.to,
                 travelMode: window.google.maps.TravelMode.DRIVING,
               };
-              const directionsService = new window.google.maps.DirectionsService();
+              const directionsService =
+                new window.google.maps.DirectionsService();
 
               directionsService.route(request, (result, status) => {
                 if (status === "OK") {
@@ -161,16 +169,17 @@ function BookingForm() {
                     },
                   });
                 } else {
+                  toast.error(
+                    `No route could be found between "${values.from}" and "${values.to}".`,
+                    { position: "top-center", autoClose: 5000 }
+                  );
                 }
-              }
-              )
+              });
             }}
           >
             {({ values, errors, touched, setFieldValue, handleSubmit }) => {
               useEffect(() => {
-              
-
-                setFieldValue("showReturn",showReturn)
+                setFieldValue("showReturn", showReturn);
                 if (!showReturn) {
                   setFieldValue("returnDate", null);
                   setFieldValue("returnTime", null);
@@ -258,79 +267,67 @@ function BookingForm() {
                     {showReturn ? "REMOVE RETURN" : "ADD RETURN"}
                   </Button>
 
-       {showReturn && (
-  <Box className="booking-date-time">
-    {/* Return Date Error */}
-   <Box display={"flex"} flexDirection={"column"}>
-      <DatePicker
-      label="Return date"
-      value={values.returnDate}
-      onChange={(val) => setFieldValue("returnDate", val)}
-      renderInput={() => (
-        <TextField
-          {...params}
-          fullWidthparams
-          error={Boolean(errors.returnDate)}
-          helperText={null} // helperText enlevé pour ne pas doubler
-          InputProps={{
-            ...params.InputProps,
-            startAdornment: (
-              <InputAdornment position="start">
-                <CalendarMonth />
-              </InputAdornment>
-            ),
-          }}
-        />
-      )}
-    />
-     {errors.returnDate && (
-      <Typography
-        variant="caption"
-        color="error"
-        sx={{ ml: "2px", mb: "2px", mt: "10px", fontSize: "0.75rem" }}
-      >
-        {errors.returnDate}
-      </Typography>
-    )}
-   </Box>
-  
+                  {showReturn && (
+                    <Box className="booking-date-time">
+                      <Box className="field-wrapper">
+                        <DatePicker
+                          label="Return date"
+                          value={values.returnDate}
+                          onChange={(val) => setFieldValue("returnDate", val)}
+                          renderInput={(params) => (
+                            <TextField
+                              {...params}
+                              fullWidth
+                              error={Boolean(errors.returnDate)}
+                              helperText={null}
+                              InputProps={{
+                                ...params.InputProps,
+                                startAdornment: (
+                                  <InputAdornment position="start">
+                                    <CalendarMonth />
+                                  </InputAdornment>
+                                ),
+                              }}
+                            />
+                          )}
+                        />
+                        {errors.returnDate && (
+                          <Typography className="field-error">
+                            {errors.returnDate}
+                          </Typography>
+                        )}
+                      </Box>
 
-   <Box display={"flex"} flexDirection={"column"}>
-    <TimePicker
-      label="Return time"
-      value={values.returnTime}
-      onChange={(val) => setFieldValue("returnTime", val)}
-      renderInput={(params) => (
-        <TextField
-          {...params}
-          fullWidth
-          error={Boolean(errors.returnTime)}
-          helperText={null}
-          InputProps={{
-            ...params.InputProps,
-            startAdornment: (
-              <InputAdornment position="start">
-                <AccessTime />
-              </InputAdornment>
-            ),
-          }}
-        />
-      )}
-    />
-     {errors.returnTime && (
-      <Typography
-        variant="caption"
-        color="error"
-        sx={{ ml: "2px", mb: "2px", mt: "10px", fontSize: "0.75rem" }}
-      >
-        {errors.returnTime}
-      </Typography>
-    )}
-  </Box>
-  </Box>  
-)}
-
-
+                      <Box className="field-wrapper">
+                        <TimePicker
+                          label="Return time"
+                          value={values.returnTime}
+                          onChange={(val) => setFieldValue("returnTime", val)}
+                          renderInput={(params) => (
+                            <TextField
+                              {...params}
+                              fullWidth
+                              error={Boolean(errors.returnTime)}
+                              helperText={null}
+                              InputProps={{
+                                ...params.InputProps,
+                                startAdornment: (
+                                  <InputAdornment position="start">
+                                    <AccessTime />
+                                  </InputAdornment>
+                                ),
+                              }}
+                            />
+                          )}
+                        />
+                        {errors.returnTime && (
+                          <Typography className="field-error">
+                            {errors.returnTime}
+                          </Typography>
+                        )}
+                      </Box>
+                    </Box>
+                  )}
 
                   <Paper elevation={0} className="booking-passenger-box">
                     <Box>

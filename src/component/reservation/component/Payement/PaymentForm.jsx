@@ -24,22 +24,25 @@ import { useFormik } from "formik";
 import { useDispatch, useSelector } from "react-redux";
 import "./PaymentForm.css";
 import * as Yup from "yup";
-import { InfoOutlined, CheckCircleOutline, ContrastOutlined } from "@mui/icons-material";
+import { CheckCircleOutline } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
+import Mastercard from "../../../../assets/pay/Mastercard-logo.png";
+import Maestro from "../../../../assets/pay/Maestro_2016.png";
+import American from "../../../../assets/pay/American_Express.png";
+import Visa from "../../../../assets/pay/Visa_Logo.png";
 
 const PaymentForm = () => {
   const dispatch = useDispatch();
-  const { addReservation,error,isLoading } = useReservation();
-  const { addTour,errorToor,isLoadingToor } = useTour();
+  const { addReservation, error, isLoading } = useReservation();
+  const { addTour, errorToor, isLoadingToor } = useTour();
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [showConfirmation, setShowConfirmation] = useState(false);
-const navigate=useNavigate();
+  const navigate = useNavigate();
   const step1Data = useSelector((state) => state.process.step1Data);
   const step2Data = useSelector((state) => state.process.step2Data);
   const step3Data = useSelector((state) => state.process.step3Data);
 
   const handlePaymentSubmit = async (values) => {
-
     dispatch(setStep3Data({ ...step3Data, ...values })); // met à jour redux avec les infos paiement
 
     const isByHour = !!step1Data?.byHour;
@@ -49,8 +52,8 @@ const navigate=useNavigate();
       phone: step3Data.phone,
       fullName: `${step3Data.firstName} ${step3Data.lastName}`,
       voitureId: step2Data?.id,
-      pickupDate: step1Data.pickupDate?step1Data.pickupDate:null,
-      pickupTime: step1Data?.pickupTime?step1Data?.pickupTime:null,
+      pickupDate: step1Data.pickupDate ? step1Data.pickupDate : null,
+      pickupTime: step1Data?.pickupTime ? step1Data?.pickupTime : null,
       passengers: step1Data?.passengers,
       total: step2Data?.total,
       etat: "En attente",
@@ -66,57 +69,57 @@ const navigate=useNavigate();
       expiryDate: values.expiryDate,
       cvc: values.cvc,
     };
-   const fullPayload = {
-  ...commonPayload,
-  ...(step1Data?.returnDate && { returnDate: step1Data.returnDate }),
-  ...(step1Data?.returnTime && { returnTime: step1Data.returnTime }),
-  type: step1Data?.type,
-  arrivee: step1Data?.to,
-};
+    const fullPayload = {
+      ...commonPayload,
+      ...(step1Data?.returnDate && { returnDate: step1Data.returnDate }),
+      ...(step1Data?.returnTime && { returnTime: step1Data.returnTime }),
+      type: step1Data?.type,
+      arrivee: step1Data?.to,
+    };
 
     try {
       const response = isByHour
         ? await addTour(commonPayload)
         : await addReservation(fullPayload);
       setIsCollapsed(true);
-      console.log(error,"ok")
-      if(!error||errorToor){
- setTimeout(() => {
-       setShowConfirmation(true)
-    }, 400);  
-     setTimeout(() => {
-       navigate("/")
-    }, 1000);
-      }else{
-    setTimeout(() => {
-       setShowConfirmation(false)
-    }, 400);
+      console.log(error, "ok");
+      if (!error || errorToor) {
+        setTimeout(() => {
+          setShowConfirmation(true);
+        }, 4000);
+        setTimeout(() => {
+          navigate("/");
+        }, 1000);
+      } else {
+        setTimeout(() => {
+          setShowConfirmation(false);
+        }, 400);
       }
     } catch (error) {
-      connsole.log(error)
+      connsole.log(error);
     }
   };
-const validationSchema = Yup.object().shape({
-  cardholderName: Yup.string()
-    .required("Le nom du titulaire est requis")
-    .min(2, "Trop court")
-    .max(50, "Trop long"),
+  const validationSchema = Yup.object().shape({
+    cardholderName: Yup.string()
+      .required("Le nom du titulaire est requis")
+      .min(2, "Trop court")
+      .max(50, "Trop long"),
 
-  cardNumber: Yup.string()
-    .required("Le numéro de carte est requis")
-    .matches(/^\d{13,19}$/, "Le numéro de carte est invalide"),
+    cardNumber: Yup.string()
+      .required("Le numéro de carte est requis")
+      .matches(/^\d{13,19}$/, "Le numéro de carte est invalide"),
 
-  expiryDate: Yup.string()
-    .required("La date d'expiration est requise")
-    .matches(
-      /^(0[1-9]|1[0-2])\/?([0-9]{2})$/,
-      "Le format de la date doit être MM/YY"
-    ),
+    expiryDate: Yup.string()
+      .required("La date d'expiration est requise")
+      .matches(
+        /^(0[1-9]|1[0-2])\/?([0-9]{2})$/,
+        "Le format de la date doit être MM/YY"
+      ),
 
-  cvc: Yup.string()
-    .required("Le CVC est requis")
-    .matches(/^[0-9]{3,4}$/, "Le CVC doit contenir 3 ou 4 chiffres"),
-});
+    cvc: Yup.string()
+      .required("Le CVC est requis")
+      .matches(/^[0-9]{3,4}$/, "Le CVC doit contenir 3 ou 4 chiffres"),
+  });
 
   const formik = useFormik({
     initialValues: {
@@ -137,44 +140,16 @@ const validationSchema = Yup.object().shape({
             Payment method
           </Typography>
           <Box className="payment-logos-section">
-            <FormControl>
-              <RadioGroup
-                row
-                name="paymentMethod"
-                value={formik.values.paymentMethod}
-                onChange={formik.handleChange}
-              >
-                <FormControlLabel
-                  value="visa"
-                  control={<Radio size="small" />}
-                  label={
-                    <Box className="card-logos-container">
-                      <img
-                        src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Visa_Inc._logo.svg/2560px-Visa_Inc._logo.svg.png"
-                        alt="Visa"
-                        className="card-logo"
-                      />
-                      <img
-                        src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2a/Mastercard-logo.svg/200px-Mastercard-logo.svg.png"
-                        alt="Mastercard"
-                        className="card-logo"
-                      />
-                      <img
-                        src="https://upload.wikimedia.org/wikipedia/commons/2/22/Maestro_2016.svg"
-                        alt="Maestro"
-                        className="card-logo"
-                      />
-                      <img
-                        src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/fa/American_Express_logo_%282018%29.svg/1200px-American_Express_logo_%282018%29.svg.png"
-                        alt="American Express"
-                        className="card-logo"
-                      />
-                    </Box>
-                  }
-                  className="payment-method-label"
-                />
-              </RadioGroup>
-            </FormControl>
+            <Box className="card-logos-container">
+              <img src={Visa} alt="Visa" className="card-logo" />
+              <img src={Mastercard} alt="Mastercard" className="card-logo" />
+              <img src={Maestro} alt="Maestro" className="card-logo" />
+              <img
+                src={American}
+                alt="American Express"
+                className="card-logo"
+              />
+            </Box>
           </Box>
 
           <TextField
@@ -368,37 +343,39 @@ const validationSchema = Yup.object().shape({
               Secure payment solution provided by
             </Typography>
             <Box className="footer-logos-container">
+              <img src={Visa} alt="visa" className="card-logo" />
               <img
-                src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Visa_Inc._logo.svg/2560px-Visa_Inc._logo.svg.png"
-                alt="Visa Verified"
+                src={Mastercard}
+                alt="mastercard"
                 className="footer-logo small-logo"
               />
+
+              <img src={Maestro} alt="Maestro" className="card-logo" />
               <img
-                src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2a/Mastercard-logo.svg/200px-Mastercard-logo.svg.png"
-                alt="Mastercard SecureCode"
+                src={American}
+                alt="American"
                 className="footer-logo small-logo"
               />
             </Box>
           </Box>
+        </Box>
 
-          <Box sx={{ mt: 3, display: "flex", justifyContent: "flex-end" }}>
-           <Button
-  type="submit"
-  variant="contained"
-  disabled={isLoading || isLoadingToor}
-  sx={{
-    backgroundColor: "#0a97b0",
-    "&:hover": {
-      backgroundColor: "#087c91",
-    },
-    padding: "10px 24px",
-    minWidth: "120px",
-  }}
->
-  {isLoading || isLoadingToor ? "Loading..." : "Submit"}
-</Button>
-
-          </Box>
+        <Box sx={{ mt: 3, display: "flex", justifyContent: "flex-end" }}>
+          <Button
+            type="submit"
+            variant="contained"
+            disabled={isLoading || isLoadingToor}
+            sx={{
+              backgroundColor: "#0a97b0",
+              "&:hover": {
+                backgroundColor: "#087c91",
+              },
+              padding: "10px 24px",
+              minWidth: "120px",
+            }}
+          >
+            {isLoading || isLoadingToor ? "Loading..." : "Submit"}
+          </Button>
         </Box>
       </form>
       <Collapse in={showConfirmation} timeout={400}>

@@ -1,8 +1,6 @@
 export function calculatePrice(car, step1, step4) {
   const isByHour = !!step1?.byHour;
-  const hourlyRate = parseFloat(
-    step4.hourlyRates?.rows?.[0]?.priceByHour ?? 0
-  );
+  const hourlyRate = parseFloat(step4.hourlyRates?.rows?.[0]?.priceByHour ?? 0);
 
   const checks = {
     hasPickupDate: !!step1?.pickupDate,
@@ -52,17 +50,31 @@ export function calculatePrice(car, step1, step4) {
     const dayOfWeek = dateObj.getDay();
     const dayType = [0, 6].includes(dayOfWeek) ? "weekend" : "week";
 
+    const segmentPoids = parseFloat(
+      step4.dayWeights.find((dw) => dw.type_jour === dayType)?.poids ?? 1
+    );
+
     const priceObj = step4.prices.find((p) => {
       const startHour = parseInt(p.heureDebut.split(":")[0], 10);
       const endHour = parseInt(p.heureFin.split(":")[0], 10);
-      return startHour < endHour
-        ? hour >= startHour && hour < endHour
-        : hour >= startHour || hour < endHour;
+      const valid =
+        startHour < endHour
+          ? hour >= startHour && hour < endHour
+          : hour >= startHour || hour < endHour;
+      if (valid) {
+        console.log("Heure matchée avec:", p);
+      }
+      return valid;
     });
 
-    if (!priceObj) return null;
+    if (!priceObj) {
+      console.log("Aucune plage horaire trouvée.");
+      return null;
+    }
+
     const prixBase = parseFloat(priceObj.prix);
-    return prixBase * distance * poids * prixVoiture;
+
+    return prixBase * distance * segmentPoids * prixVoiture;
   };
 
   const aller = computeSegment(step1.pickupDate, step1.pickupTime);

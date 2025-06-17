@@ -43,9 +43,11 @@ export default function CardAndSummary() {
           </Card>
         </Grid>
 
-        <Grid item xs={12} md={4}>
-          <DeanSummary />
-        </Grid>
+        <Card className="card-pay ">
+          <CardContent className="card-content-pay ">
+            <DeanSummary />
+          </CardContent>
+        </Card>
       </Grid>
     </Box>
   );

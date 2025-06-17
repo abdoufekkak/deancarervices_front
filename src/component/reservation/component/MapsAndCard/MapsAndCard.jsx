@@ -7,7 +7,7 @@ import {
   DirectionsRenderer,
 } from "@react-google-maps/api";
 import { useLocation } from "react-router-dom";
-import { Box } from "@mui/material";
+import { Box, Card, CardContent } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { setStep1Data } from "../../../../store/processSlice";
 import GoogleMaps from "../GoogleMaps/googleMapPage";
@@ -42,9 +42,11 @@ export default function MapsAndCard() {
             <TransferCard />
           </Box>
 
-          <Box className="map-right">
-            <DeanSummary />
-          </Box>
+          <Card className="card-pay ">
+            <CardContent className="card-content-pay ">
+              <DeanSummary />
+            </CardContent>
+          </Card>
         </Box>
       </Box>{" "}
     </>
