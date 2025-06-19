@@ -9,13 +9,18 @@ import { useSelector } from "react-redux";
 import "../CardInfo/CardInfo.css";
 import { useNavigate } from "react-router-dom";
 import Steps from "../../../../Steps/Steps";
+import { calculatePrice } from "../Tomobiles/hooks/usePriceCalculator";
 
 export default function ExtraInfoPage() {
   const [extraInfoCollapsed, setExtraInfoCollapsed] = useState(false);
   const [isCollapsed, setIsCollapsed] = useState(true);
+  const step1 = useSelector((state) => state.process.step1Data);
+  const step4 = useSelector((state) => state.process.step4Data);
   const selectedCar = useSelector((state) => state.process.step2Data);
   const navigate = useNavigate();
-
+  const updatedCar = selectedCar
+    ? { ...selectedCar, ...calculatePrice(selectedCar, step1, step4) }
+    : null;
   const handleToggle = () => {
     if (isCollapsed) {
       navigate("/info");
@@ -33,13 +38,9 @@ export default function ExtraInfoPage() {
       <Grid container spacing={8} sx={{ maxWidth: "1400px", mx: "auto" }}>
         <Grid item xs={12} md={8}>
           <Steps activeStep={2} completedSteps={[0, 1, 2]} />
-          {selectedCar && (
+          {updatedCar && (
             <Box sx={{ mb: 2 }}>
-              <CarCard
-                car={selectedCar}
-                isSelected={true}
-                onSelect={() => {}}
-              />
+              <CarCard car={updatedCar} isSelected={true} onSelect={() => {}} />
             </Box>
           )}
 

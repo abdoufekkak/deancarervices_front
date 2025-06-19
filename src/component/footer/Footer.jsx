@@ -122,8 +122,20 @@ function Footer() {
             ))}
           </Box>
           <Box className="footer-icons">
-            <Facebook />
-            <Instagram />
+            <a
+              href="https://www.facebook.com/share/1AKBqp8bZC/?mibextid=wwXIfr"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <Facebook />
+            </a>
+            <a
+              href="https://www.instagram.com/deanlimousine1?igsh=MTM0cnc2aW1sem84Yw=="
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <Instagram />
+            </a>
           </Box>
         </Grid>
       </Grid>

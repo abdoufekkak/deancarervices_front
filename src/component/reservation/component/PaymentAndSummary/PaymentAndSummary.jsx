@@ -8,9 +8,16 @@ import { useSelector } from "react-redux";
 import FeatureBar from "../FeatureBar/FeatureBar";
 import CarCard from "../Tomobiles/Car";
 import Steps from "../../../../Steps/Steps";
+import { calculatePrice } from "../Tomobiles/hooks/usePriceCalculator";
+
 export default function PaymentAndSummary() {
+  const step1 = useSelector((state) => state.process.step1Data);
+  const step4 = useSelector((state) => state.process.step4Data);
   const selectedCar = useSelector((state) => state.process.step2Data);
   const [showExtraInfo, setShowExtraInfo] = useState(false);
+  const updatedCar = selectedCar
+    ? { ...selectedCar, ...calculatePrice(selectedCar, step1, step4) }
+    : null;
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
@@ -24,13 +31,9 @@ export default function PaymentAndSummary() {
         <Grid item xs={12} md={8}>
           <Steps activeStep={3} completedSteps={[0, 1, 2]} />
 
-          {selectedCar && (
+          {updatedCar && (
             <Box>
-              <CarCard
-                car={selectedCar}
-                isSelected={true}
-                onSelect={() => {}}
-              />
+              <CarCard car={updatedCar} isSelected={true} onSelect={() => {}} />
             </Box>
           )}
 

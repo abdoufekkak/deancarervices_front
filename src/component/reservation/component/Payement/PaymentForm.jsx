@@ -89,7 +89,7 @@ const PaymentForm = () => {
         }, 4000);
         setTimeout(() => {
           navigate("/");
-        }, 1000);
+        }, 7000);
       } else {
         setTimeout(() => {
           setShowConfirmation(false);

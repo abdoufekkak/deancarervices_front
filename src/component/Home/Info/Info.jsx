@@ -34,11 +34,11 @@ function Info() {
 
               <div className="d-flex flex-wrap gap-4 mt-4 chauffeur-stats">
                 <div>
-                  <p className="stat-number fw-bold mb-0">76+</p>
+                  <p className="stat-number fw-bold mb-0">1+</p>
                   <p>Countries</p>
                 </div>
                 <div>
-                  <p className="stat-number fw-bold mb-0">2100+</p>
+                  <p className="stat-number fw-bold mb-0">100+</p>
                   <p>Cities</p>
                 </div>
                 <div>
