@@ -105,3 +105,18 @@
     width: 90%;
   }
 }
+@media (max-width: 1280px) {
+  .card-pay {
+    width: 75%;
+    max-width: 100%;
+    margin: 15px auto;
+    padding: 16px;
+    margin-top: 5px;
+    margin-bottom: 25px;
+  }
+  .card-content-pay {
+    display: flex;
+    flex-direction: column;
+    width: 90%;
+  }
+}

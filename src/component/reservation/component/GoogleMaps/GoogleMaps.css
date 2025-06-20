@@ -86,7 +86,6 @@
     width: 90%;
   }
 }
-/* Mobile adjustments: when screen width is less than 1280px */
 @media (max-width: 1280px) {
   .map-section {
     flex-direction: column; /* Stack the map and sidebar vertically */
@@ -117,6 +116,19 @@
 
   .map-card {
     height: 300px !important; /* Make the map container responsive */
+  }
+  .card-pay {
+    width: 75%;
+    max-width: 100%;
+    margin: 15px auto;
+    padding: 16px;
+    margin-top: 5px;
+    margin-bottom: 25px;
+  }
+  .card-content-pay {
+    display: flex;
+    flex-direction: column;
+    width: 90%;
   }
 }
 

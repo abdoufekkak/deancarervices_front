@@ -7,48 +7,42 @@ import { setStep2Data } from "../../../../store/processSlice";
 import { calculatePrice } from "./hooks/usePriceCalculator";
 
 const CarsList = () => {
-  const { isLoading, error, fetchCars } = useCars();
-  const [cars, setCars] = useState([]);
+  const { cars, isLoading, error } = useCars(); // ⬅️ on récupère directement les voitures
+  const [carsList, setCarsList] = useState([]);
   const [selectedCarId, setSelectedCarId] = useState(null);
 
   const step1 = useSelector((state) => state.process.step1Data);
   const step4 = useSelector((state) => state.process.step4Data);
   const dispatch = useDispatch();
 
-useEffect(() => {
-  fetchCars()
-    .then((data) => {
-      const carsWithPrice = data
-        .map((car) => {
-          const price = calculatePrice(car, step1, step4);
-          if (price) {
-            return { ...car, ...price };
-          }
-          return null;
-        })
-        .filter(Boolean); // Enlève les null
+  // Calcule les prix quand les voitures ou les étapes changent
+  useEffect(() => {
+    if (!cars || cars.length === 0) {
+      setCarsList([]);
+      return;
+    }
 
-      // Facultatif : stocker le premier calcul dans redux
-      if (carsWithPrice.length > 0) {
-        dispatch(setStep2Data(carsWithPrice[0]));
-      }
+    const carsWithPrice = cars
+      .map((car) => {
+        const price = calculatePrice(car, step1, step4);
+        return price ? { ...car, ...price } : null;
+      })
+      .filter(Boolean);
 
-      setCars(carsWithPrice);
-    })
-    .catch((e) => {
-    });
-}, [step1, step4]);
+    if (carsWithPrice.length > 0) {
+      dispatch(setStep2Data(carsWithPrice[0]));
+    }
 
+    setCarsList(carsWithPrice);
+  }, [cars, step1, step4]);
 
   if (isLoading) {
     return (
       <Box
-        sx={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          height: "100vh",
-        }}
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+        height="200px"
       >
         <CircularProgress />
       </Box>
@@ -57,19 +51,27 @@ useEffect(() => {
 
   if (error) {
     return (
-      <Typography color="error" align="center">
-        erreur de chargement
+      <Typography color="error" align="center" mt={2}>
+        Erreur de chargement des voitures.
+      </Typography>
+    );
+  }
+
+  if (carsList.length === 0) {
+    return (
+      <Typography align="center" mt={2}>
+        Aucun véhicule disponible pour votre recherche.
       </Typography>
     );
   }
 
   return (
     <Box sx={{ display: "flex", flexWrap: "wrap", justifyContent: "center" }}>
-      {cars && cars.map((car) => (
+      {carsList.map((car) => (
         <CarCard
           key={car.id}
           car={car}
-          price={car.price} // 👈 tu passes le prix déjà calculé
+          price={car.price}
           isSelected={selectedCarId === car.id}
           onSelect={() => setSelectedCarId(car.id)}
         />

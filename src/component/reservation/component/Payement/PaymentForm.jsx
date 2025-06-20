@@ -86,7 +86,7 @@ const PaymentForm = () => {
       if (!error || errorToor) {
         setTimeout(() => {
           setShowConfirmation(true);
-        }, 4000);
+        }, 400);
         setTimeout(() => {
           navigate("/");
         }, 7000);
