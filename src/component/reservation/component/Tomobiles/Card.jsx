@@ -51,16 +51,8 @@ const CarsList = () => {
 
   if (error) {
     return (
-      <Typography color="error" align="center" mt={2}>
-        Erreur de chargement des voitures.
-      </Typography>
-    );
-  }
-
-  if (carsList.length === 0) {
-    return (
-      <Typography align="center" mt={2}>
-        Aucun véhicule disponible pour votre recherche.
+      <Typography color="error" align="center">
+        {error}
       </Typography>
     );
   }
