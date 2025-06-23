@@ -9,45 +9,25 @@ import usePrice from "../../reservation/component/Tomobiles/hooks/calculatePrice
 import { useDispatch, useSelector } from "react-redux";
 import { setStep4Data } from "../../../store/processSlice.js";
 import { Box, CircularProgress } from "@mui/material";
+import { motion } from "framer-motion";
+
 
 function Header() {
-  const [loading, setLoading] = useState(true);
-  const { fetchAllprice } = usePrice();
-  const dispatch = useDispatch(); // en haut de ton composant
-
-  useEffect(() => {
-    setLoading(true);
-    fetchAllprice()
-      .then((data) => {
-        dispatch(setStep4Data({ ...data })); // ✅ Voilà la bonne utilisation
-      })
-      .catch((e) => {})
-      .finally(() => {
-        setLoading(false);
-      });
-  }, []);
-
-  if (loading) {
-    return (
-      <Box
-        display="flex"
-        justifyContent="center"
-        alignItems="center"
-        height="60vh"
-      >
-        <CircularProgress />
-      </Box>
-    );
-  }
-  return (
-    <section className="slider_section">
+ 
+ 
+return (
+    <motion.section 
+      className="slider_section"
+      initial={{ opacity: 0, y: 50 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 1, ease: "easeOut" }}
+    >
       <div className="slider_bg_box">
         <img src={imgg} alt="Background" />
       </div>
 
       <div className="header-content">
         <div className="header-text">
-          {/* your existing header content like h1, p, etc. */}
           <h1>
             We Provide best <br />
             Transport Service
@@ -63,8 +43,9 @@ function Header() {
           <BookingForm />
         </div>
       </div>
-    </section>
+    </motion.section>
   );
 }
+
 
 export default Header;

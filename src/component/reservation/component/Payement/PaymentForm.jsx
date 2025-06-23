@@ -30,19 +30,50 @@ import Mastercard from "../../../../assets/pay/Mastercard-logo.png";
 import Maestro from "../../../../assets/pay/Maestro_2016.png";
 import American from "../../../../assets/pay/American_Express.png";
 import Visa from "../../../../assets/pay/Visa_Logo.png";
+import {
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  DialogActions,
+} from "@mui/material";
 
 const PaymentForm = () => {
   const dispatch = useDispatch();
   const { addReservation, error, isLoading } = useReservation();
   const { addTour, errorToor, isLoadingToor } = useTour();
-  const [isCollapsed, setIsCollapsed] = useState(false);
   const [showConfirmation, setShowConfirmation] = useState(false);
   const navigate = useNavigate();
   const step1Data = useSelector((state) => state.process.step1Data);
   const step2Data = useSelector((state) => state.process.step2Data);
   const step3Data = useSelector((state) => state.process.step3Data);
+const [openSuccessModal, setOpenSuccessModal] = useState(false);
 
   const handlePaymentSubmit = async (values) => {
+  const parseDateTime = (dateStr, timeStr) => {
+  const [day, month, year] = dateStr.split("/");
+  const [hours, minutes] = timeStr.split(":");
+  return new Date(year, month - 1, day, hours, minutes);
+};
+
+   if (
+  step1Data?.pickupDate &&
+  step1Data?.pickupTime &&
+  step1Data?.returnDate &&
+  step1Data?.returnTime
+) {
+  const pickupDateTime = parseDateTime(step1Data.pickupDate, step1Data.pickupTime);
+  const returnDateTime = parseDateTime(step1Data.returnDate, step1Data.returnTime);
+  if (returnDateTime <= pickupDateTime) {
+    alert("The return date and time must be later than the pickup date and time.")
+        // toast.error(
+
+        //                 `The return date and time must be later than the pickup date and time.`,
+        //                 { position: "top-center", autoClose: 5000 }
+        //               );
+    return;
+  }
+}
     dispatch(setStep3Data({ ...step3Data, ...values })); // met à jour redux avec les infos paiement
 
     const isByHour = !!step1Data?.byHour;
@@ -81,45 +112,50 @@ const PaymentForm = () => {
       const response = isByHour
         ? await addTour(commonPayload)
         : await addReservation(fullPayload);
-      setIsCollapsed(true);
-      console.log(error, "ok");
-      if (!error || errorToor) {
-        setTimeout(() => {
-          setShowConfirmation(true);
-        }, 400);
-        setTimeout(() => {
-          navigate("/");
-        }, 7000);
-      } else {
-        setTimeout(() => {
-          setShowConfirmation(false);
-        }, 400);
-      }
+          if (response) {
+    setOpenSuccessModal(true); 
+  }
+  else{
+    alert("ok")
+  }
+      // if (!error || errorToor) {
+      //   setTimeout(() => {
+      //     setShowConfirmation(true);
+      //   }, 400);
+      //   setTimeout(() => {
+      //     navigate("/");
+      //   }, 7000);
+      // } else {
+      //   setTimeout(() => {
+      //     setShowConfirmation(false);
+      //   }, 400);
+      // }
+      
     } catch (error) {
-      connsole.log(error);
     }
   };
-  const validationSchema = Yup.object().shape({
-    cardholderName: Yup.string()
-      .required("Le nom du titulaire est requis")
-      .min(2, "Trop court")
-      .max(50, "Trop long"),
+const validationSchema = Yup.object().shape({
+  cardholderName: Yup.string()
+    .required("Cardholder name is required")
+    .min(2, "Too short")
+    .max(50, "Too long"),
 
-    cardNumber: Yup.string()
-      .required("Le numéro de carte est requis")
-      .matches(/^\d{13,19}$/, "Le numéro de carte est invalide"),
+  cardNumber: Yup.string()
+    .required("Card number is required")
+    .matches(/^\d{13,19}$/, "Invalid card number"),
 
-    expiryDate: Yup.string()
-      .required("La date d'expiration est requise")
-      .matches(
-        /^(0[1-9]|1[0-2])\/?([0-9]{2})$/,
-        "Le format de la date doit être MM/YY"
-      ),
+  expiryDate: Yup.string()
+    .required("Expiration date is required")
+    .matches(
+      /^(0[1-9]|1[0-2])\/?([0-9]{2})$/,
+      "Date format must be MM/YY"
+    ),
 
-    cvc: Yup.string()
-      .required("Le CVC est requis")
-      .matches(/^[0-9]{3,4}$/, "Le CVC doit contenir 3 ou 4 chiffres"),
-  });
+  cvc: Yup.string()
+    .required("CVC is required")
+    .matches(/^[0-9]{3,4}$/, "CVC must be 3 or 4 digits"),
+});
+
 
   const formik = useFormik({
     initialValues: {
@@ -402,6 +438,30 @@ const PaymentForm = () => {
           </CardContent>
         </Card>
       </Collapse>
+   <Dialog open={openSuccessModal} onClose={() => {}}>
+  <DialogTitle>Reservation Sent</DialogTitle>
+  <DialogContent>
+    <DialogContentText>
+      Your reservation has been successfully submitted. A confirmation email will be sent to you shortly.
+    </DialogContentText>
+  </DialogContent>
+  <DialogActions>
+    <Button
+      onClick={() => {
+        setOpenSuccessModal(false);
+       navigate("/"); // ✅ Redirect
+      }}
+      autoFocus
+      color="primary"
+      variant="contained"
+    >
+      OK
+    </Button>
+  </DialogActions>
+
+</Dialog>
+
+
     </>
   );
 };

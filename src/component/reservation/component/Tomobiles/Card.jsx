@@ -1,13 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { Box, CircularProgress, Typography } from "@mui/material";
-import useCars from "./hooks/useCare";
 import CarCard from "./Car";
 import { useSelector, useDispatch } from "react-redux";
 import { setStep2Data } from "../../../../store/processSlice";
 import { calculatePrice } from "./hooks/usePriceCalculator";
 
-const CarsList = () => {
-  const { cars, isLoading, error } = useCars(); // ⬅️ on récupère directement les voitures
+const CarsList = ({cars}) => {
   const [carsList, setCarsList] = useState([]);
   const [selectedCarId, setSelectedCarId] = useState(null);
 
@@ -36,26 +34,7 @@ const CarsList = () => {
     setCarsList(carsWithPrice);
   }, [cars, step1, step4]);
 
-  if (isLoading) {
-    return (
-      <Box
-        display="flex"
-        justifyContent="center"
-        alignItems="center"
-        height="200px"
-      >
-        <CircularProgress />
-      </Box>
-    );
-  }
 
-  if (error) {
-    return (
-      <Typography color="error" align="center">
-        {error}
-      </Typography>
-    );
-  }
 
   return (
     <Box sx={{ display: "flex", flexWrap: "wrap", justifyContent: "center" }}>

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import reactLogo from "./assets/react.svg";
 import viteLogo from "/vite.svg";
 import "./App.css";
@@ -21,8 +21,57 @@ import PaymentAndSummary from "./component/reservation/component/PaymentAndSumma
 import StepGuard from "./Guard/StepGuard.jsx";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { Box, CircularProgress } from "@mui/material";
+import usePrice from "./component/reservation/component/Tomobiles/hooks/calculatePrice.jsx";
+import { setStep4Data } from "./store/processSlice.js";
 function App() {
-  const step1Data = useSelector((state) => state.process.step1Data);
+ const { fetchAllprice, isLoading, error } = usePrice();
+  const dispatch = useDispatch();
+
+useEffect(() => {
+  let isMounted = true;
+
+  const getdata = async () => {
+    try {
+      const data = await fetchAllprice();
+      if (data && isMounted) {
+        dispatch(setStep4Data({ ...data }));
+      }
+    } catch (e) {
+    }
+  };
+
+  getdata();
+
+  return () => {
+    isMounted = false;
+  };
+}, []);
+ if (isLoading) {
+    return (
+      <Box
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+        height="60vh"
+      >
+        <CircularProgress />
+      </Box>
+    );
+  }
+
+  if (error) {
+    return (
+      <Box
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+        height="60vh"
+      >
+        <p style={{ color: "red" }}>{error}</p>
+      </Box>
+    );
+  }
   return (
     <>
       <Router>

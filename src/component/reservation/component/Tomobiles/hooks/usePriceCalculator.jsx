@@ -62,13 +62,11 @@ export function calculatePrice(car, step1, step4) {
           ? hour >= startHour && hour < endHour
           : hour >= startHour || hour < endHour;
       if (valid) {
-        console.log("Heure matchée avec:", p);
       }
       return valid;
     });
 
     if (!priceObj) {
-      console.log("Aucune plage horaire trouvée.");
       return null;
     }
 

@@ -15,6 +15,7 @@ const useReservation = () => {
       return response.data; // Stocke les données des voitures dans le state
     } catch (err) {
       setError("Erreur lors de la récupération des voitures");
+      return null
     } finally {
       setIsLoading(false);
     }

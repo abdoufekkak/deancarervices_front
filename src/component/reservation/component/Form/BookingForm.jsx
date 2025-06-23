@@ -39,9 +39,7 @@ import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 const validationSchema = Yup.object().shape({
   from: Yup.string().required("From is required"),
-  to: Yup.string()
-    .required("To is required")
-    .notOneOf([Yup.ref("from")], "Destination must be different from origin"),
+  to: Yup.string().required("To is required").notOneOf([Yup.ref("from")], "Destination must be different from origin"),
   pickupDate: Yup.date().required("Pickup date is required"),
   pickupTime: Yup.date().required("Pickup time is required"),
   returnDate: Yup.date()
@@ -382,6 +380,7 @@ function BookingForm() {
           <ByHourCard />
         )}
       </Box>
+      
     </LocalizationProvider>
   );
 }

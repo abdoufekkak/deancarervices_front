@@ -14,6 +14,8 @@ const useTour = () => {
       return response.data;
     } catch (err) {
       setRerrorToor("Erreur lors de l ajout ");
+      return null
+
     } finally {
       setIsLoadingToor(false);
     }

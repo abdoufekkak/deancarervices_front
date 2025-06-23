@@ -16,7 +16,7 @@ const useCars = () => {
       setError(null);
     } catch (err) {
       console.error("Erreur lors de la récupération des voitures :", err);
-      setError("Erreur lors de la récupération des voitures");
+      setErrorsetError("Something went wrong. Please try again.");
     } finally {
       setIsLoading(false);
     }
