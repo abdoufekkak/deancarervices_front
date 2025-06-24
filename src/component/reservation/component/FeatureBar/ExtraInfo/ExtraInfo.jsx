@@ -184,14 +184,7 @@ function ExtraInfo() {
             <Button
               type="submit"
               variant="contained"
-              sx={{
-                backgroundColor: "#0a97b0",
-                "&:hover": {
-                  backgroundColor: "#087c91", // une version plus foncée au survol
-                },
-                padding: "10px 24px",
-                minWidth: "120px", // optionnel pour un look plus propre
-              }}
+              className="continue-button"
             >
               Continue
             </Button>

@@ -25,29 +25,28 @@ import { Box, CircularProgress } from "@mui/material";
 import usePrice from "./component/reservation/component/Tomobiles/hooks/calculatePrice.jsx";
 import { setStep4Data } from "./store/processSlice.js";
 function App() {
- const { fetchAllprice, isLoading, error } = usePrice();
+  const { fetchAllprice, isLoading, error } = usePrice();
   const dispatch = useDispatch();
 
-useEffect(() => {
-  let isMounted = true;
+  useEffect(() => {
+    let isMounted = true;
 
-  const getdata = async () => {
-    try {
-      const data = await fetchAllprice();
-      if (data && isMounted) {
-        dispatch(setStep4Data({ ...data }));
-      }
-    } catch (e) {
-    }
-  };
+    const getdata = async () => {
+      try {
+        const data = await fetchAllprice();
+        if (data && isMounted) {
+          dispatch(setStep4Data({ ...data }));
+        }
+      } catch (e) {}
+    };
 
-  getdata();
+    getdata();
 
-  return () => {
-    isMounted = false;
-  };
-}, []);
- if (isLoading) {
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+  if (isLoading) {
     return (
       <Box
         display="flex"
@@ -76,6 +75,7 @@ useEffect(() => {
     <>
       <Router>
         <NavBar />
+        <ToastContainer position="top-center" autoClose={5000} />
 
         <Routes>
           <Route
@@ -83,7 +83,6 @@ useEffect(() => {
             element={
               <>
                 <Header />
-                <ToastContainer position="top-center" autoClose={5000} />
                 <Services />
                 <About />
                 <Info />

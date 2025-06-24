@@ -107,3 +107,52 @@
 .footer-logo.encryption-logo {
   height: 24px;
 }
+.success-dialog-paper {
+  border-radius: 16px;
+  padding: 24px;
+  background-color: #f0fcff;
+  text-align: center;
+  min-width: 360px;
+}
+
+.success-dialog-title {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-bottom: 0;
+}
+
+.success-icon {
+  font-size: 50px;
+  color: #0a97b0;
+}
+
+.success-dialog-content {
+  padding-top: 0;
+}
+
+.success-dialog-heading {
+  color: #0a97b0;
+  margin-bottom: 8px;
+}
+
+.success-dialog-text {
+  color: #333;
+  font-size: 0.95rem;
+}
+
+.success-dialog-actions {
+  justify-content: center;
+  margin-top: 16px;
+}
+
+.success-dialog-button {
+  background-color: #0a97b0 !important;
+  padding: 8px 32px !important;
+  border-radius: 8px !important;
+  transition: background-color 0.3s ease !important;
+}
+
+.success-dialog-button:hover {
+  background-color: #087c91 !important;
+}

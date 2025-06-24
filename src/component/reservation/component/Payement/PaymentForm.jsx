@@ -9,9 +9,7 @@ import {
   FormControlLabel,
   InputAdornment,
   Button,
-  Radio,
-  RadioGroup,
-  FormControl,
+  Checkbox,
 } from "@mui/material";
 import CreditCardIcon from "@mui/icons-material/CreditCard";
 import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
@@ -30,6 +28,8 @@ import Mastercard from "../../../../assets/pay/Mastercard-logo.png";
 import Maestro from "../../../../assets/pay/Maestro_2016.png";
 import American from "../../../../assets/pay/American_Express.png";
 import Visa from "../../../../assets/pay/Visa_Logo.png";
+import { toast } from "react-toastify";
+
 import {
   Dialog,
   DialogTitle,
@@ -47,34 +47,35 @@ const PaymentForm = () => {
   const step1Data = useSelector((state) => state.process.step1Data);
   const step2Data = useSelector((state) => state.process.step2Data);
   const step3Data = useSelector((state) => state.process.step3Data);
-const [openSuccessModal, setOpenSuccessModal] = useState(false);
+  const [openSuccessModal, setOpenSuccessModal] = useState(false);
 
   const handlePaymentSubmit = async (values) => {
-  const parseDateTime = (dateStr, timeStr) => {
-  const [day, month, year] = dateStr.split("/");
-  const [hours, minutes] = timeStr.split(":");
-  return new Date(year, month - 1, day, hours, minutes);
-};
+    const parseDateTime = (dateStr, timeStr) => {
+      const [day, month, year] = dateStr.split("/");
+      const [hours, minutes] = timeStr.split(":");
+      return new Date(year, month - 1, day, hours, minutes);
+    };
 
-   if (
-  step1Data?.pickupDate &&
-  step1Data?.pickupTime &&
-  step1Data?.returnDate &&
-  step1Data?.returnTime
-) {
-  const pickupDateTime = parseDateTime(step1Data.pickupDate, step1Data.pickupTime);
-  const returnDateTime = parseDateTime(step1Data.returnDate, step1Data.returnTime);
-  if (returnDateTime <= pickupDateTime) {
-    alert("The return date and time must be later than the pickup date and time.")
-        // toast.error(
-
-        //                 `The return date and time must be later than the pickup date and time.`,
-        //                 { position: "top-center", autoClose: 5000 }
-        //               );
-    return;
-  }
-}
-    dispatch(setStep3Data({ ...step3Data, ...values })); // met à jour redux avec les infos paiement
+    if (
+      step1Data?.pickupDate &&
+      step1Data?.pickupTime &&
+      step1Data?.returnDate &&
+      step1Data?.returnTime
+    ) {
+      const pickupDateTime = parseDateTime(
+        step1Data.pickupDate,
+        step1Data.pickupTime
+      );
+      const returnDateTime = parseDateTime(
+        step1Data.returnDate,
+        step1Data.returnTime
+      );
+      if (returnDateTime <= pickupDateTime) {
+        toast.error("The return date must be later than the pickup date .");
+        return;
+      }
+    }
+    dispatch(setStep3Data({ ...step3Data, ...values }));
 
     const isByHour = !!step1Data?.byHour;
 
@@ -112,12 +113,11 @@ const [openSuccessModal, setOpenSuccessModal] = useState(false);
       const response = isByHour
         ? await addTour(commonPayload)
         : await addReservation(fullPayload);
-          if (response) {
-    setOpenSuccessModal(true); 
-  }
-  else{
-    alert("ok")
-  }
+      if (response) {
+        setOpenSuccessModal(true);
+      } else {
+        alert("ok");
+      }
       // if (!error || errorToor) {
       //   setTimeout(() => {
       //     setShowConfirmation(true);
@@ -130,32 +130,34 @@ const [openSuccessModal, setOpenSuccessModal] = useState(false);
       //     setShowConfirmation(false);
       //   }, 400);
       // }
-      
-    } catch (error) {
-    }
+    } catch (error) {}
   };
-const validationSchema = Yup.object().shape({
-  cardholderName: Yup.string()
-    .required("Cardholder name is required")
-    .min(2, "Too short")
-    .max(50, "Too long"),
+  const validationSchema = Yup.object().shape({
+    cardholderName: Yup.string()
+      .required("Cardholder name is required")
+      .min(2, "Too short")
+      .max(50, "Too long"),
 
-  cardNumber: Yup.string()
-    .required("Card number is required")
-    .matches(/^\d{13,19}$/, "Invalid card number"),
+    cardNumber: Yup.string()
+      .required("Card number is required")
+      .matches(/^\d{13,19}$/, "Invalid card number"),
 
-  expiryDate: Yup.string()
-    .required("Expiration date is required")
-    .matches(
-      /^(0[1-9]|1[0-2])\/?([0-9]{2})$/,
-      "Date format must be MM/YY"
+    expiryDate: Yup.string()
+      .required("Expiration date is required")
+      .matches(/^(0[1-9]|1[0-2])\/?([0-9]{2})$/, "Date format must be MM/YY"),
+
+    cvc: Yup.string()
+      .required("CVC is required")
+      .matches(/^[0-9]{3,4}$/, "CVC must be 3 or 4 digits"),
+    termsAccepted: Yup.boolean().oneOf(
+      [true],
+      "You must accept the terms and conditions."
     ),
-
-  cvc: Yup.string()
-    .required("CVC is required")
-    .matches(/^[0-9]{3,4}$/, "CVC must be 3 or 4 digits"),
-});
-
+    joinOnemile: Yup.boolean().oneOf(
+      [true],
+      "You must accept the terms and conditions."
+    ),
+  });
 
   const formik = useFormik({
     initialValues: {
@@ -163,6 +165,8 @@ const validationSchema = Yup.object().shape({
       cardNumber: "",
       expiryDate: "",
       cvc: "",
+      termsAccepted: false,
+      joinOnemile: false,
     },
     validationSchema,
     onSubmit: handlePaymentSubmit,
@@ -394,6 +398,59 @@ const validationSchema = Yup.object().shape({
               />
             </Box>
           </Box>
+          <Box mt={3}>
+            {/* Checkbox 1 : termsAccepted */}
+            <FormControlLabel
+              control={
+                <Checkbox
+                  name="termsAccepted"
+                  checked={formik.values.termsAccepted}
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
+                  color="primary"
+                />
+              }
+              label={
+                <Typography variant="body2">
+                  I accept the <strong>Terms & Conditions</strong> and the{" "}
+                  <strong>Booking Conditions</strong> *
+                </Typography>
+              }
+            />
+            {formik.touched.termsAccepted && formik.errors.termsAccepted && (
+              <Typography variant="caption" color="error" sx={{ ml: 4 }}>
+                {formik.errors.termsAccepted}
+              </Typography>
+            )}
+
+            {/* Checkbox 2 : joinOnemile */}
+            <FormControlLabel
+              control={
+                <Checkbox
+                  name="joinOnemile"
+                  checked={formik.values.joinOnemile}
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
+                  color="primary"
+                />
+              }
+              label={
+                <Typography variant="body2">
+                  <strong>
+                    <span style={{ color: "#000" }}>one</span>
+                    <span style={{ color: "#f4aa3f" }}>MILE</span>
+                  </strong>{" "}
+                  Join ONEMILE free, earn miles and save on rides. <br />
+                  <span style={{ color: "#000" }}>Terms apply.</span>
+                </Typography>
+              }
+            />
+            {formik.touched.joinOnemile && formik.errors.joinOnemile && (
+              <Typography variant="caption" color="error" sx={{ ml: 4 }}>
+                {formik.errors.joinOnemile}
+              </Typography>
+            )}
+          </Box>
         </Box>
 
         <Box sx={{ mt: 3, display: "flex", justifyContent: "flex-end" }}>
@@ -438,30 +495,39 @@ const validationSchema = Yup.object().shape({
           </CardContent>
         </Card>
       </Collapse>
-   <Dialog open={openSuccessModal} onClose={() => {}}>
-  <DialogTitle>Reservation Sent</DialogTitle>
-  <DialogContent>
-    <DialogContentText>
-      Your reservation has been successfully submitted. A confirmation email will be sent to you shortly.
-    </DialogContentText>
-  </DialogContent>
-  <DialogActions>
-    <Button
-      onClick={() => {
-        setOpenSuccessModal(false);
-       navigate("/"); // ✅ Redirect
-      }}
-      autoFocus
-      color="primary"
-      variant="contained"
-    >
-      OK
-    </Button>
-  </DialogActions>
+      <Dialog
+        open={openSuccessModal}
+        onClose={() => {}}
+        PaperProps={{ className: "success-dialog-paper" }}
+      >
+        <DialogTitle className="success-dialog-title">
+          <CheckCircleOutline className="success-icon" />
+        </DialogTitle>
 
-</Dialog>
+        <DialogContent className="success-dialog-content">
+          <Typography variant="h6" className="success-dialog-heading">
+            Reservation Confirmed!
+          </Typography>
+          <DialogContentText className="success-dialog-text">
+            Your reservation has been successfully submitted. <br />A
+            confirmation email will be sent to you shortly.
+          </DialogContentText>
+        </DialogContent>
 
-
+        <DialogActions className="success-dialog-actions">
+          <Button
+            onClick={() => {
+              setOpenSuccessModal(false);
+              navigate("/");
+            }}
+            autoFocus
+            variant="contained"
+            className="success-dialog-button"
+          >
+            OK
+          </Button>
+        </DialogActions>
+      </Dialog>
     </>
   );
 };
