@@ -9,13 +9,12 @@ const useTour = () => {
   const addTour = async (data) => {
     try {
       setRerrorToor("");
-      setIsLoadingToor(true)
+      setIsLoadingToor(true);
       const response = await axios.post(`${http.apiBaseUrl}tours`, data);
       return response.data;
     } catch (err) {
       setRerrorToor("Erreur lors de l ajout ");
-      return null
-
+      return null;
     } finally {
       setIsLoadingToor(false);
     }

@@ -24,11 +24,11 @@ function Services() {
             <path d="M12 2a15.3 15.3 0 0 1 0 20"></path>
           </svg>
         </div>
-        <h3>Global</h3>
+        <h3>GLOBAL</h3>
         <p>
           Wherever your journey leads, Dean ensures your comfort along the way.
         </p>
-        <a href="#">Learn more ➔</a>
+        <a href="/">Learn more ➔</a>
       </div>
 
       <div class="feature">
@@ -48,9 +48,9 @@ function Services() {
             <path d="M5.5 21h13a1.5 1.5 0 0 0 1.5-1.5v-2a6.5 6.5 0 0 0-13 0v2A1.5 1.5 0 0 0 5.5 21z"></path>
           </svg>
         </div>
-        <h3>Professional drivers</h3>
+        <h3>PROFESSIONAL DRIVERS</h3>
         <p>Professional Drivers, Timely Rides, Relaxed Travel</p>
-        <a href="#">Learn more ➔</a>
+        <a href="/">Learn more ➔</a>
       </div>
 
       <div class="feature">
@@ -70,9 +70,9 @@ function Services() {
             <polyline points="12 6 12 12 16 14"></polyline>
           </svg>
         </div>
-        <h3>Chauffeur by the hour</h3>
+        <h3>CHAUFFEUR BY THE HOUR</h3>
         <p>Hire an hourly chauffeur for your business or leisure needs.</p>
-        <a href="#">Learn more ➔</a>
+        <a href="/">Learn more ➔</a>
       </div>
 
       <div class="feature">
@@ -94,9 +94,9 @@ function Services() {
             <path d="M21 13v2a4 4 0 0 1-4 4H3"></path>
           </svg>
         </div>
-        <h3>City rides</h3>
+        <h3>CITY RIDES</h3>
         <p>Explore the city anytime, anywhere—even long distances.</p>
-        <a href="#">Learn more ➔</a>
+        <a href="/">Learn more ➔</a>
       </div>
     </section>
   );
