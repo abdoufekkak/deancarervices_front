@@ -34,7 +34,6 @@ export const {
   setStep2Data,
   setStep3Data,
   setStep4Data,
-  setStep5Data,
   resetProcess,
 } = processSlice.actions;
 export default processSlice.reducer;

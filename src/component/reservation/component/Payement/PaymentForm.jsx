@@ -29,6 +29,7 @@ import Maestro from "../../../../assets/pay/Maestro_2016.png";
 import American from "../../../../assets/pay/American_Express.png";
 import Visa from "../../../../assets/pay/Visa_Logo.png";
 import { toast } from "react-toastify";
+import { resetProcess } from "../../../../store/processSlice";
 
 import {
   Dialog,
@@ -114,9 +115,11 @@ const PaymentForm = () => {
         ? await addTour(commonPayload)
         : await addReservation(fullPayload);
       if (response) {
-        setOpenSuccessModal(true);
+        if (response) {
+          setOpenSuccessModal(true);
+        }
       } else {
-        alert("ok");
+        toast.error("An error occurred");
       }
       // if (!error || errorToor) {
       //   setTimeout(() => {
@@ -517,6 +520,7 @@ const PaymentForm = () => {
         <DialogActions className="success-dialog-actions">
           <Button
             onClick={() => {
+              dispatch(resetProcess());
               setOpenSuccessModal(false);
               navigate("/");
             }}
